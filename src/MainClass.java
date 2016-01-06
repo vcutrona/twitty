@@ -1,12 +1,21 @@
 import java.util.HashSet;
 
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.stereotype.Component;
+
 import extractor.UserClassification;
 import twitter.TweetExtractor;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
 public class MainClass {
-	public static void main(String args[]) throws TwitterException {
+	/*
+	@Override
+    public void run(String... args) throws Exception {
+        main2(args);
+    }
+	
+	public static void main2(String args[]) throws TwitterException {
 
 		TweetExtractor stream = new TweetExtractor();
 		HashSet<User> users = stream.execute();
@@ -19,5 +28,5 @@ public class MainClass {
 			break;
 		}
 
-	}
+	}*/
 }

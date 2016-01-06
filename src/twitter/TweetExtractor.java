@@ -13,11 +13,12 @@ import java.util.HashSet;
 
 public class TweetExtractor {
 
+	/*
  public static void main(String[] args) throws TwitterException {
   TweetExtractor stream = new TweetExtractor();
   stream.execute();
  }
- 
+ */
  private final Object lock = new Object();
  public HashSet < User > execute() throws TwitterException {
 
