@@ -1,4 +1,4 @@
-package twitter;
+package main.java.twitter;
 
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -34,7 +34,8 @@ public class TweetExtractor {
 				User user = status.getUser();
 
 				// Se abbiamo trovato un utente lo salviamo nell'hashset
-				if (user.getLocation() != null && user.getStatusesCount() > 200) {
+				System.out.println("Questo utente: " + user.getLocation() + " " + user.getLang() + " " + user.getStatusesCount());
+				if ((user.getLang() == "en")) {
 					users.add(user);
 					System.out.println("Adesso abbiamo " + users.size() + " utenti");
 					// System.out.println(user.getName());

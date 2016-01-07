@@ -1,10 +1,11 @@
-package util;
+package main.java.util;
 
 public class UserFields {
 	
 	public static final String MALE = "male";
 	public static final String FEMALE = "female";
-	
+
+	private String location;
 	private String interest;
 	private String gender;
 	private String hashtags;
@@ -34,4 +35,11 @@ public class UserFields {
 	public void setAge(String age) {
 		this.age = age;
 	}
+	public String getLocation() {
+		return location;
+	}
+	public void setLocation(String location) {
+		this.location = location;
+	}
+	
 }

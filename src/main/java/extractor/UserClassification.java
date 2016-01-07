@@ -1,4 +1,4 @@
-package extractor;
+package main.java.extractor;
 
 import java.util.Arrays;
 import java.util.List;
