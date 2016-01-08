@@ -14,8 +14,9 @@ import util.UserFields;
 @RestController
 public class MainController {
 
-    @RequestMapping("/greeting")
-    public UserFields greeting(@RequestParam(value="name", defaultValue="World") String name) {
+    @RequestMapping("/search")
+    public UserFields search(
+    		@RequestParam(value="location") String loc) {
     	try {
 	    	TweetExtractor stream = new TweetExtractor();
 			HashSet<User> users = stream.execute();
@@ -27,7 +28,7 @@ public class MainController {
 				String location = user.getLocation();
 				System.out.println("User " + user.getScreenName() + "is a " + gender + " of " + age + " years");
 				UserFields u = new UserFields();
-		        u.setAge(age);
+		        u.setAgeMin(Integer.parseInt(age)); //TODO split
 		        u.setGender(gender);
 		        u.setLocation(location);
 		    	return u;

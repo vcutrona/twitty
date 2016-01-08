@@ -5,11 +5,13 @@ public class UserFields {
 	public static final String MALE = "male";
 	public static final String FEMALE = "female";
 
-	private String location;
-	private String interest;
-	private String gender;
-	private String hashtags;
-	private String age;
+	public String location;
+	public String interest;
+	public String gender;
+	public String hashtags;
+	public int ageMin;
+	public int ageMax;
+
 	
 	public String getInterest() {
 		return interest;
@@ -29,11 +31,17 @@ public class UserFields {
 	public void setHashtags(String hashtags) {
 		this.hashtags = hashtags;
 	}
-	public String getAge() {
-		return age;
+	public int getAgeMin() {
+		return ageMin;
 	}
-	public void setAge(String age) {
-		this.age = age;
+	public void setAgeMin(int ageMin) {
+		this.ageMin = ageMin;
+	}
+	public int getAgeMax() {
+		return ageMax;
+	}
+	public void setAgeMax(int ageMax) {
+		this.ageMax = ageMax;
 	}
 	public String getLocation() {
 		return location;
