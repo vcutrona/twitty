@@ -4,12 +4,14 @@ import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.IntField;
+import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
@@ -19,6 +21,8 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import util.UserFields;
 
 public class IndexCreator {
+	
+	private static final String[] boostVars = {"follower"};
 		
 	private static IndexWriter createIndexWriter() {
 		
@@ -61,8 +65,9 @@ public class IndexCreator {
 						case "class java.lang.String":
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
-								if (field.get(user) != null)
+								if (field.get(user) != null) {
 									docField = new TextField(field.getName(), (String)field.get(user), Field.Store.YES);
+								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
 							} catch (IllegalAccessException e) {
@@ -72,7 +77,12 @@ public class IndexCreator {
 						case "int":
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (int)field.get(user) );
-								docField = new IntField(field.getName(), (int)field.get(user), Field.Store.YES);
+								if (Arrays.asList(boostVars).contains(field.getName())) {
+									System.out.println("Faccio boost");
+									docField = new NumericDocValuesField(field.getName(), (int)field.get(user));
+								} else {
+									docField = new IntField(field.getName(), (int)field.get(user), Field.Store.YES);
+								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
 							} catch (IllegalAccessException e) {
@@ -86,19 +96,18 @@ public class IndexCreator {
 						if (docField != null)
 							doc.add(docField);
 					}
+					try {
+						//System.out.println("Doc:" + doc);
+						w.addDocument(doc);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
 				try {
-					System.out.println("Doc:" + doc);
-					w.addDocument(doc);
+					w.close();
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
-			}
-
-			try {
-				w.close();
-			} catch (IOException e) {
-				e.printStackTrace();
 			}
 		}
 	}
@@ -111,7 +120,7 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-	public static void bean(String[] args) throws IllegalArgumentException, IllegalAccessException {
+	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 		
 		UserFields user = new UserFields();
 		user.gender = "maschio";
@@ -120,6 +129,7 @@ public class IndexCreator {
 		user.ageMin = 11;
 		user.location = "benebene";
 		user.interest = "niente";
+		user.follower = 5;
 		
 		UserFields user2 = new UserFields();
 		user2.gender = "femmina";
