@@ -19,6 +19,7 @@ import org.apache.lucene.store.SimpleFSDirectory;
 import util.UserFields;
 
 public class IndexCreator {
+		
 	private static IndexWriter createIndexWriter() {
 		
 		//Generate timestamp
@@ -46,7 +47,7 @@ public class IndexCreator {
 	}
 	
 	private static void populateIndex(IndexWriter w, ArrayList<UserFields> users ) {
-		/*
+		
 		java.lang.reflect.Field[] fields = UserFields.class.getDeclaredFields();
 		
 		if (w != null) {
@@ -99,48 +100,7 @@ public class IndexCreator {
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
-		}*/
-		
-		if (w != null) {
-			for (UserFields user : users) {
-				Document doc = new Document();
-				if (user.getLocation() != null) {
-					Field location = new TextField("location", "pirla", Field.Store.YES);
-					doc.add(location);
-				}
-				if (user.getInterest() != null) {
-				Field interest = new TextField("interest", "pirla", Field.Store.YES);
-				doc.add(interest);
-				}
-				if (user.getGender() != null) {
-					Field gender = new TextField("gender", "pirla", Field.Store.YES);
-					doc.add(gender);
-						
-				}
-				if (user.getHashtags() != null) {
-					Field hashtags = new TextField("hashtags", "pirla", Field.Store.YES);
-					doc.add(hashtags);
-					
-				}
-				Field ageMin = new IntField("ageMin", 0, Field.Store.YES);
-				doc.add(ageMin);
-				Field ageMax = new IntField("ageMax", 0, Field.Store.YES);
-				doc.add(ageMax);
-				try {
-					w.addDocument(doc);
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-			
-			try {
-				w.close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
 		}
-		
-		
 	}
 	
 	public static void create(ArrayList<UserFields> users) {
@@ -172,4 +132,5 @@ public class IndexCreator {
 		create(uf);
 		
 	}
+
 }
