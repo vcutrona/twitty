@@ -149,6 +149,10 @@ public class UserClassification {
 			System.out.println("User " + user.getScreenName() + "is a " + gender + " of " + age + " years");
 			UserFields u = new UserFields();
 	        u.setGender(gender);
+	        u.screenName = screenName;
+	        u.profileBig = user.getOriginalProfileImageURL();
+	        u.friends = user.getFriendsCount();
+	        u.follower = user.getFavouritesCount();
 	        u.setInterest(tweetData);
 	        u.setLocation(location);
 	        u.setHashtags(hashTags);

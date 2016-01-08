@@ -4,8 +4,12 @@ public class UserFields {
 	
 	public static final String MALE = "male";
 	public static final String FEMALE = "female";
-
+	
+	public int follower;
+	public int friends;
+	public String screenName;
 	public String location;
+	public String profileBig;
 	public String interest;
 	public String gender;
 	public String hashtags;
@@ -48,6 +52,12 @@ public class UserFields {
 	}
 	public void setLocation(String location) {
 		this.location = location;
+	}
+	public int getFollower() {
+		return follower;
+	}
+	public void setFollower(int follower) {
+		this.follower = follower;
 	}
 	
 }
