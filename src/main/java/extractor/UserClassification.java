@@ -1,13 +1,17 @@
 package extractor;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
+import util.UserFields;
 import com.google.code.uclassify.client.UClassifyClient;
 import com.google.code.uclassify.client.UClassifyClientFactory;
 import com.uclassify.api._1.responseschema.Classification;
 
+import twitter4j.EntitySupport;
+import twitter4j.HashtagEntity;
 import twitter4j.Paging;
 import twitter4j.Status;
 import twitter4j.Twitter;
@@ -23,10 +27,9 @@ public class UserClassification {
 
 	private Twitter twitter;
 	private ConfigurationBuilder cb;
-	private String textConcatenation;
 	final UClassifyClientFactory factory;
 	final UClassifyClient client;
-
+	
 	public UserClassification() {
 		this.cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true).setOAuthConsumerKey("CONSUMER_KEY")
@@ -38,11 +41,16 @@ public class UserClassification {
 		this.factory = UClassifyClientFactory.newInstance("YOUR_KEY", null);
 		this.client = factory.createUClassifyClient();
 	}
-
-	private String getUserData(String screenName) throws TwitterException {
+	
+	private List<Status>  getStatuses(String screenName) throws TwitterException {
 		Paging paging = new Paging(1, 200);
 
 		List<Status> statuses = this.twitter.getUserTimeline(screenName, paging);
+
+		return statuses;
+	}
+
+	private String getUserData(List<Status> statuses) throws TwitterException {
 
 		String string = "";
 		for (Status status : statuses) {
@@ -51,10 +59,24 @@ public class UserClassification {
 		return string;
 	}
 
-	public String getGender(String screenName) throws TwitterException {
+	private String getUserHashtag(List<Status> statuses) throws TwitterException {
+
+		HashSet <HashtagEntity> hashtags = new HashSet<HashtagEntity>();
+		for (Status status : statuses) {
+			
+			hashtags.addAll(Arrays.asList(status.getHashtagEntities()));
+		}
+		String hashy = "";
+        for (HashtagEntity hashtagEntity : hashtags) {
+        	hashy += hashtagEntity.getText() + " ";
+		}
+		return hashy;
+	}
+	
+	public String getGender(String screenName, String tweetData) throws TwitterException {
 
 		Map<String, Classification> classifications = this.client.classify("uClassify", "GenderAnalyzer_v5",
-				Arrays.asList(this.getUserData(screenName)));
+				Arrays.asList(tweetData));
 		System.out.println("================ Classifications ==================");
 		String returnClass = "None";
 		//un for, ma con una sola classificazione? non so come toglierlo....
@@ -83,10 +105,10 @@ public class UserClassification {
 		return returnClass;
 	}
 
-	public String getAge(String screenName) throws TwitterException {
+	public String getAge(String screenName, String tweetData) throws TwitterException {
 
 		Map<String, Classification> classifications = this.client.classify("uClassify", "Ageanalyzer",
-				Arrays.asList(this.getUserData(screenName)));
+				Arrays.asList(tweetData));
 		System.out.println("================ Classifications ==================");
 		String returnClass = "None";
 
@@ -114,4 +136,30 @@ public class UserClassification {
 		}
 		return returnClass;
 	}
+	public ArrayList <UserFields> buildUserFieldList (HashSet<User> users) throws TwitterException {
+		ArrayList<UserFields> uf = new ArrayList<UserFields>();
+		for (User user : users) {
+			String screenName = user.getScreenName();
+			List <Status> statuses = this.getStatuses(screenName);
+			String tweetData = this.getUserData(statuses);
+			String hashTags = this.getUserHashtag(statuses);
+			String age = this.getAge(screenName, tweetData);
+			String gender = this.getGender(screenName, tweetData);
+			String location = user.getLocation();
+			System.out.println("User " + user.getScreenName() + "is a " + gender + " of " + age + " years");
+			UserFields u = new UserFields();
+	        u.setGender(gender);
+	        u.setInterest(tweetData);
+	        u.setLocation(location);
+	        u.setHashtags(hashTags);
+	        String[] parts = age.split("-");
+	        u.setAgeMin(Integer.parseInt(parts[0])); 
+	        u.setAgeMax(Integer.parseInt(parts[1])); 
+	        
+	        uf.add(u);
+		}
+		return uf;
+		
+	}
+	
 }

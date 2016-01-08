@@ -111,7 +111,7 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
+	public static void bean(String[] args) throws IllegalArgumentException, IllegalAccessException {
 		
 		UserFields user = new UserFields();
 		user.gender = "maschio";
