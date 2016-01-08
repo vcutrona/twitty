@@ -1,4 +1,4 @@
-package main.java.irproject;
+package irproject;
 
 import java.util.HashSet;
 
@@ -6,10 +6,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import main.java.extractor.UserClassification;
-import main.java.twitter.TweetExtractor;
+import extractor.UserClassification;
+import twitter.TweetExtractor;
 import twitter4j.User;
-import main.java.util.UserFields;
+import util.UserFields;
 
 @RestController
 public class MainController {
