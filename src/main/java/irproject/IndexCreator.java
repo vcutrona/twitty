@@ -1,18 +1,24 @@
 package irproject;
 
+import java.io.File;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.en.EnglishAnalyzer;
+import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.NumericDocValuesField;
-import org.apache.lucene.document.TextField;
+import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -23,22 +29,30 @@ import util.UserFields;
 public class IndexCreator {
 	
 	private static final String[] boostVars = {"follower"};
+	private static final String[] untokenizedVars = {"screenName", "gender"};
 		
 	private static IndexWriter createIndexWriter() {
 		
-		//Generate timestamp
-		Date date = new Date();
-		long time = date.getTime();
-		
 		Path path = FileSystems.getDefault().getPath("logs", "index");
-	    Directory index = null;
+
+		//delete old index
+		for (File file: Arrays.asList(path.toFile().listFiles())) {
+			file.delete();
+		}
+		
+		Directory index = null;
 		try {
 			index = new SimpleFSDirectory(path);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	        
-		StandardAnalyzer analyzer = new StandardAnalyzer();
+		// map field-name to analyzer
+		Map<String, Analyzer> analyzerPerField = new HashMap<String, Analyzer>();
+		analyzerPerField.put("interest", new EnglishAnalyzer());
+		 
+		// create a per-field analyzer wrapper using the StandardAnalyzer as .. standard analyzer ;)
+		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerPerField);
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		IndexWriter w = null;
 		try {
@@ -61,12 +75,19 @@ public class IndexCreator {
 					Field docField = null;
 					if (field.getModifiers() == 1) {
 						String type = field.getGenericType().toString();
+						
+						//create field type
+						FieldType fieldType = new FieldType();
+						fieldType.setStored(true);
+						fieldType.setIndexOptions(IndexOptions.DOCS);
+						fieldType.setTokenized(!(Arrays.asList(untokenizedVars).contains(field.getName())));
+
 						switch (type){
 						case "class java.lang.String":
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
 								if (field.get(user) != null) {
-									docField = new TextField(field.getName(), (String)field.get(user), Field.Store.YES);
+									docField = new Field(field.getName(), (String)field.get(user), fieldType);
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -96,7 +117,6 @@ public class IndexCreator {
 						if (docField != null)
 							doc.add(docField);
 					}
-					
 				}
 				try {
 					//System.out.println("Doc:" + doc);
@@ -129,8 +149,9 @@ public class IndexCreator {
 		user.ageMax = 15;
 		user.ageMin = 11;
 		user.location = "benebene";
-		user.interest = "niente";
+		user.interest = "to be or not to be aliens";
 		user.follower = 5;
+		user.screenName = "Angelino";
 		
 		UserFields user2 = new UserFields();
 		user2.gender = "femmina";
