@@ -57,8 +57,8 @@ public class IndexCreator {
 		if (w != null) {
 			for (UserFields user : users) {
 				Document doc = new Document();
-				Field docField = null;
 				for (java.lang.reflect.Field field : fields ){
+					Field docField = null;
 					if (field.getModifiers() == 1) {
 						String type = field.getGenericType().toString();
 						switch (type){
@@ -96,18 +96,19 @@ public class IndexCreator {
 						if (docField != null)
 							doc.add(docField);
 					}
-					try {
-						//System.out.println("Doc:" + doc);
-						w.addDocument(doc);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
+					
 				}
 				try {
-					w.close();
+					//System.out.println("Doc:" + doc);
+					w.addDocument(doc);
 				} catch (IOException e) {
 					e.printStackTrace();
 				}
+			}
+			try {
+				w.close();
+			} catch (IOException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -138,7 +139,7 @@ public class IndexCreator {
 		
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		uf.add(user);
-		//uf.add(user2);
+		uf.add(user2);
 		create(uf);
 		
 	}
