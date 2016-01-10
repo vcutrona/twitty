@@ -152,7 +152,7 @@ public class UserClassification {
 	        u.screenName = screenName;
 	        u.profileBig = user.getOriginalProfileImageURL();
 	        u.friends = user.getFriendsCount();
-	        u.follower = user.getFavouritesCount();
+	        u.follower = user.getFollowersCount();
 	        u.setInterest(tweetData);
 	        u.setLocation(location);
 	        u.setHashtags(hashTags);
