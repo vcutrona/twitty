@@ -21,7 +21,10 @@ public class MainController {
 	    	TweetExtractor stream = new TweetExtractor();
 			HashSet<User> users = stream.execute();
 			UserClassification cinni = new UserClassification();
-			return cinni.buildUserFieldList(users);
+			IndexCreator ic = new IndexCreator();
+			ArrayList<UserFields> list = cinni.buildUserFieldList(users);
+			ic.create(list);
+			return list;
     	} catch(Exception e) {
     		//TODO
 	    	return null;

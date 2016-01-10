@@ -30,7 +30,7 @@ public class IndexCreator {
 		Date date = new Date();
 		long time = date.getTime();
 		
-		Path path = FileSystems.getDefault().getPath("logs", String.valueOf(time));
+		Path path = FileSystems.getDefault().getPath("logs", "index");
 	    Directory index = null;
 		try {
 			index = new SimpleFSDirectory(path);
@@ -113,7 +113,7 @@ public class IndexCreator {
 		}
 	}
 	
-	public static void create(ArrayList<UserFields> users) {
+	public void create(ArrayList<UserFields> users) {
 		// Create index
 		IndexWriter w = createIndexWriter();
 		
@@ -121,7 +121,7 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
+	public static void get(String[] args) throws IllegalArgumentException, IllegalAccessException {
 		
 		UserFields user = new UserFields();
 		user.gender = "maschio";
@@ -140,7 +140,7 @@ public class IndexCreator {
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		uf.add(user);
 		uf.add(user2);
-		create(uf);
+		//create(uf);
 		
 	}
 
