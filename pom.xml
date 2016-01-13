@@ -35,7 +35,11 @@
 			<artifactId>lucene-queryparser</artifactId>
 			<version>5.4.0</version>
 		</dependency>
-		
+				<dependency>
+			<groupId>org.apache.lucene</groupId>
+			<artifactId>lucene-highlighter</artifactId>
+			<version>5.4.0</version>
+		</dependency>
 		<!-- uClassify -->
 		<dependency>
 		    <groupId>uclassify-java-sdk</groupId>

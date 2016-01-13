@@ -31,7 +31,7 @@ public class SearchHelper {
 
 	public static void main(String args[]) throws IOException, ParseException {
 		SearchHelper se = new SearchHelper();
-		TopDocs topDocs = se.performSearch("Bikram Lamba", 100);
+		TopDocs topDocs = se.performSearch("word", "", 100);
 
 		// obtain the ScoreDoc (= documentID, relevanceScore) array from topDocs
 		ScoreDoc[] hits = topDocs.scoreDocs;
@@ -56,9 +56,9 @@ public class SearchHelper {
 
 	public TopDocs performSearch(String interest, String hashtag, int n)
 			throws IOException, ParseException {
-		Query baseQuery = new TermQuery(new Term("interest", "heart"));
+		//Query baseQuery = new TermQuery(new Term("interest", "heart"));
 		Query boostQuery = new FunctionQuery(new LongFieldSource("follower"));
-		Query q = new CustomScoreQuery(baseQuery, (FunctionQuery) boostQuery);
+		//Query q = new CustomScoreQuery(baseQuery, (FunctionQuery) boostQuery);
 
 
 		EnglishAnalyzer analyzer = new EnglishAnalyzer();
@@ -69,7 +69,9 @@ public class SearchHelper {
 		Query query2 = new TermQuery(new Term("hashtag", hashtag));
 		booleanQuery.add(query1, BooleanClause.Occur.SHOULD);
 		booleanQuery.add(query2, BooleanClause.Occur.SHOULD);
-		return searcher.search(booleanQuery, n);
+		Query q = new CustomScoreQuery(booleanQuery, (FunctionQuery) boostQuery);
+
+		return searcher.search(q, n);
 	}
 
 	public Document getDocument(int docId) throws IOException {
