@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
+import org.apache.lucene.analysis.core.KeywordAnalyzer;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -18,12 +19,14 @@ import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
+import analyzer.TweetAnalyzer;
 import util.UserFields;
 
 public class IndexCreator {
@@ -49,10 +52,10 @@ public class IndexCreator {
 	        
 		// map field-name to analyzer
 		Map<String, Analyzer> analyzerPerField = new HashMap<String, Analyzer>();
-		analyzerPerField.put("interest", new EnglishAnalyzer());
+		analyzerPerField.put("tweet", new TweetAnalyzer());
 		 
 		// create a per-field analyzer wrapper using the StandardAnalyzer as .. standard analyzer ;)
-		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new StandardAnalyzer(), analyzerPerField);
+		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new KeywordAnalyzer(), analyzerPerField);
 		IndexWriterConfig config = new IndexWriterConfig(analyzer);
 		IndexWriter w = null;
 		try {
@@ -75,18 +78,13 @@ public class IndexCreator {
 					if (field.getModifiers() == 1) {
 						String type = field.getGenericType().toString();
 						
-						//create field type
-						FieldType fieldType = new FieldType();
-						fieldType.setStored(true);
-						fieldType.setIndexOptions(IndexOptions.DOCS);
-						fieldType.setTokenized(!(Arrays.asList(untokenizedVars).contains(field.getName())));
 
 						switch (type){
 						case "class java.lang.String":
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
 								if (field.get(user) != null) {
-									doc.add(new Field(field.getName(), (String)field.get(user), fieldType));
+									doc.add(new TextField(field.getName(), (String)field.get(user), Field.Store.YES));
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -115,7 +113,7 @@ public class IndexCreator {
 								ArrayList<String> strings = (ArrayList<String>) field.get(user);
 								if (strings != null) {
 									for (String string: strings){
-										doc.add(new Field(field.getName(), string, fieldType));
+										doc.add(new TextField(field.getName(), string, Field.Store.YES));
 									}
 								}
 							} catch (IllegalArgumentException e) {

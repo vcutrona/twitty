@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import extractor.UserClassification;
 import twitter.TweetExtractor;
+import twitter4j.TwitterException;
 import twitter4j.User;
 import util.UserFields;
 
@@ -25,8 +26,9 @@ public class MainController {
 			ArrayList<UserFields> list = cinni.buildUserFieldList(users);
 			ic.create(list);
 			return list;
-    	} catch(Exception e) {
-    		//TODO
+    	} catch(TwitterException e) {
+    		System.out.println(e.getMessage());
+    		System.out.println(e.getStackTrace());
 	    	return null;
 	    }
     }

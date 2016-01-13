@@ -46,17 +46,15 @@ public class SearchHelper {
 		// parser = new QueryParser("interest", new EnglishAnalyzer());
 	}
 
-	public static void get(String args[]) throws IOException, ParseException {
+	public static void main(String args[]) throws IOException, ParseException {
 
 		HashMap<String, String> ht = new HashMap<String, String>();
-		ht.put("interest", "AND");
-		ht.put("hashtag", "OR");
-		ht.put("gender", "AND");
-
+		ht.put("tweet", "AND");
+		ht.put("gender", "OR");
 
 		SearchHelper se = new SearchHelper(ht);
-		TopDocs topDocs = se.performSearch("word", "", "", 100);
-
+		TopDocs topDocs = se.performSearch("lucky", "female", 100);
+		System.out.println("sto cercando");
 		// obtain the ScoreDoc (= documentID, relevanceScore) array from topDocs
 		ScoreDoc[] hits = topDocs.scoreDocs;
 
@@ -72,7 +70,7 @@ public class SearchHelper {
 
 
 
-	public TopDocs performSearch(String interest, String hashtag, String gender, int n)
+	public TopDocs performSearch(String interest,  String gender, int n)
 			throws IOException, ParseException {
 
 		
@@ -81,20 +79,18 @@ public class SearchHelper {
 		@SuppressWarnings("deprecation")
 		//Query booleana
 		BooleanQuery booleanQuery = new BooleanQuery();
-		Query query1 = new TermQuery(new Term("interest", interest));
-		Query query2 = new TermQuery(new Term("hashtag", hashtag));
-		Query query3 = new TermQuery(new Term("gender", gender));
+		Query query1 = new TermQuery(new Term("tweet", interest));
+		Query query2 = new TermQuery(new Term("gender", gender));
 
 		//Le query sono in and o in or?
-		BooleanClause.Occur shouldInterest;
+		BooleanClause.Occur shouldTweet;
 		BooleanClause.Occur shouldGender;
-		BooleanClause.Occur shouldHashtag;
 
-		if(this.dictionary.get("interst") == "AND") {
-			shouldInterest = BooleanClause.Occur.MUST;
+		if(this.dictionary.get("tweet") == "AND") {
+			shouldTweet = BooleanClause.Occur.MUST;
 		}
 		else {
-			shouldInterest = BooleanClause.Occur.SHOULD;
+			shouldTweet = BooleanClause.Occur.SHOULD;
 		}
 		if(this.dictionary.get("gender") == "AND") {
 			shouldGender = BooleanClause.Occur.MUST;
@@ -102,16 +98,9 @@ public class SearchHelper {
 		else {
 			shouldGender = BooleanClause.Occur.SHOULD;
 		}		
-		if(this.dictionary.get("hashtag") == "AND") {
-			shouldHashtag = BooleanClause.Occur.MUST;
-		}
-		else {
-			shouldHashtag = BooleanClause.Occur.SHOULD;
-		}
 		
-		booleanQuery.add(query1, shouldInterest);
+		booleanQuery.add(query1, shouldTweet);
 		booleanQuery.add(query2, shouldGender);
-		booleanQuery.add(query2, shouldHashtag);
 		Query q = new CustomScoreQuery(booleanQuery, (FunctionQuery) boostQuery);
 
 		return searcher.search(q, n);

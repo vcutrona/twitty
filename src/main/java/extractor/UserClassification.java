@@ -50,15 +50,6 @@ public class UserClassification {
 		return statuses;
 	}
 
-	private String getUserData(List<Status> statuses) throws TwitterException {
-
-		String string = "";
-		for (Status status : statuses) {
-			string += status.getText();
-		}
-		return string;
-	}
-
 	private String getUserHashtag(List<Status> statuses) throws TwitterException {
 
 		HashSet <HashtagEntity> hashtags = new HashSet<HashtagEntity>();
@@ -141,7 +132,15 @@ public class UserClassification {
 		for (User user : users) {
 			String screenName = user.getScreenName();
 			List <Status> statuses = this.getStatuses(screenName);
-			String tweetData = this.getUserData(statuses);
+			ArrayList <String> tweets = new ArrayList<String>();
+			String tweetData = "";
+
+			for (Status status : statuses) {
+				String temp = status.getText();
+				tweets.add(temp);
+				tweetData +=  " " + temp;
+			}
+			
 			String hashTags = this.getUserHashtag(statuses);
 			String age = this.getAge(screenName, tweetData);
 			String gender = this.getGender(screenName, tweetData);
@@ -155,7 +154,7 @@ public class UserClassification {
 	        String[] parts = age.split("-");
 	        u.ageMin = Integer.parseInt(parts[0]); 
 	        u.ageMax = Integer.parseInt(parts[1]); 
-	        
+	        u.tweet = tweets;
 	        uf.add(u);
 		}
 		return uf;
