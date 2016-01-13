@@ -10,6 +10,9 @@ import org.apache.lucene.search.*;
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.lucene.document.Document;
 import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
@@ -28,10 +31,31 @@ public class SearchHelper {
 
 	private static IndexSearcher searcher = null;
 	private QueryParser parser = null;
+	Map<String, String> dictionary;
 
-	public static void main(String args[]) throws IOException, ParseException {
-		SearchHelper se = new SearchHelper();
-		TopDocs topDocs = se.performSearch("word", "", 100);
+	/**
+	 * Crea un search helper per poter effetture le ricerce
+	 * @param ht HashMap con all'interno i campi 
+	 * con le rispettive direttive (es: devono essere in and o or i field?)
+	 * @throws IOException
+	 */
+	public SearchHelper(HashMap<String, String> ht) throws IOException {
+		Path path = FileSystems.getDefault().getPath("logs", "index");
+		dictionary  = ht;
+		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
+		// parser = new QueryParser("interest", new EnglishAnalyzer());
+	}
+
+	public static void get(String args[]) throws IOException, ParseException {
+
+		HashMap<String, String> ht = new HashMap<String, String>();
+		ht.put("interest", "AND");
+		ht.put("hashtag", "OR");
+		ht.put("gender", "AND");
+
+
+		SearchHelper se = new SearchHelper(ht);
+		TopDocs topDocs = se.performSearch("word", "", "", 100);
 
 		// obtain the ScoreDoc (= documentID, relevanceScore) array from topDocs
 		ScoreDoc[] hits = topDocs.scoreDocs;
@@ -46,29 +70,48 @@ public class SearchHelper {
 		}
 	}
 
-	/** Creates a new instance of SearchEngine */
-	public SearchHelper() throws IOException {
-		Path path = FileSystems.getDefault().getPath("logs", "index");
 
-		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
-		// parser = new QueryParser("interest", new EnglishAnalyzer());
-	}
 
-	public TopDocs performSearch(String interest, String hashtag, int n)
+	public TopDocs performSearch(String interest, String hashtag, String gender, int n)
 			throws IOException, ParseException {
-		//Query baseQuery = new TermQuery(new Term("interest", "heart"));
+
+		
 		Query boostQuery = new FunctionQuery(new LongFieldSource("follower"));
-		//Query q = new CustomScoreQuery(baseQuery, (FunctionQuery) boostQuery);
-
-
-		EnglishAnalyzer analyzer = new EnglishAnalyzer();
 		// city query
 		@SuppressWarnings("deprecation")
+		//Query booleana
 		BooleanQuery booleanQuery = new BooleanQuery();
 		Query query1 = new TermQuery(new Term("interest", interest));
 		Query query2 = new TermQuery(new Term("hashtag", hashtag));
-		booleanQuery.add(query1, BooleanClause.Occur.SHOULD);
-		booleanQuery.add(query2, BooleanClause.Occur.SHOULD);
+		Query query3 = new TermQuery(new Term("gender", gender));
+
+		//Le query sono in and o in or?
+		BooleanClause.Occur shouldInterest;
+		BooleanClause.Occur shouldGender;
+		BooleanClause.Occur shouldHashtag;
+
+		if(this.dictionary.get("interst") == "AND") {
+			shouldInterest = BooleanClause.Occur.MUST;
+		}
+		else {
+			shouldInterest = BooleanClause.Occur.SHOULD;
+		}
+		if(this.dictionary.get("gender") == "AND") {
+			shouldGender = BooleanClause.Occur.MUST;
+		}
+		else {
+			shouldGender = BooleanClause.Occur.SHOULD;
+		}		
+		if(this.dictionary.get("hashtag") == "AND") {
+			shouldHashtag = BooleanClause.Occur.MUST;
+		}
+		else {
+			shouldHashtag = BooleanClause.Occur.SHOULD;
+		}
+		
+		booleanQuery.add(query1, shouldInterest);
+		booleanQuery.add(query2, shouldGender);
+		booleanQuery.add(query2, shouldHashtag);
 		Query q = new CustomScoreQuery(booleanQuery, (FunctionQuery) boostQuery);
 
 		return searcher.search(q, n);
