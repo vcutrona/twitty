@@ -148,17 +148,13 @@ public class UserClassification {
 			String location = user.getLocation();
 			System.out.println("User " + user.getScreenName() + "is a " + gender + " of " + age + " years");
 			UserFields u = new UserFields();
-	        u.setGender(gender);
+	        u.gender = gender;
 	        u.screenName = screenName;
-	        u.profileBig = user.getOriginalProfileImageURL();
-	        u.friends = user.getFriendsCount();
+	        u.profileBigImage = user.getOriginalProfileImageURL();
 	        u.follower = user.getFollowersCount();
-	        u.setInterest(tweetData);
-	        u.setLocation(location);
-	        u.setHashtags(hashTags);
 	        String[] parts = age.split("-");
-	        u.setAgeMin(Integer.parseInt(parts[0])); 
-	        u.setAgeMax(Integer.parseInt(parts[1])); 
+	        u.ageMin = Integer.parseInt(parts[0]); 
+	        u.ageMax = Integer.parseInt(parts[1]); 
 	        
 	        uf.add(u);
 		}

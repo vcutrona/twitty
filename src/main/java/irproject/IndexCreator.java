@@ -72,7 +72,6 @@ public class IndexCreator {
 			for (UserFields user : users) {
 				Document doc = new Document();
 				for (java.lang.reflect.Field field : fields ){
-					Field docField = null;
 					if (field.getModifiers() == 1) {
 						String type = field.getGenericType().toString();
 						
@@ -87,7 +86,7 @@ public class IndexCreator {
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
 								if (field.get(user) != null) {
-									docField = new Field(field.getName(), (String)field.get(user), fieldType);
+									doc.add(new Field(field.getName(), (String)field.get(user), fieldType));
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -100,9 +99,24 @@ public class IndexCreator {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (int)field.get(user) );
 								if (Arrays.asList(boostVars).contains(field.getName())) {
 									System.out.println("Faccio boost");
-									docField = new NumericDocValuesField(field.getName(), (int)field.get(user));
+									doc.add(new NumericDocValuesField(field.getName(), (int)field.get(user)));
 								} else {
-									docField = new IntField(field.getName(), (int)field.get(user), Field.Store.YES);
+									doc.add(new IntField(field.getName(), (int)field.get(user), Field.Store.YES));
+								}
+							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							}
+							break;
+						case "java.util.ArrayList<java.lang.String>":
+							try {
+								System.out.println("Attribute: " + field.getName() + " Value: " + (ArrayList<String>)field.get(user) );
+								ArrayList<String> strings = (ArrayList<String>) field.get(user);
+								if (strings != null) {
+									for (String string: strings){
+										doc.add(new Field(field.getName(), string, fieldType));
+									}
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -113,13 +127,9 @@ public class IndexCreator {
 						default:
 							throw new IllegalArgumentException("Invalid type " + type);
 						}
-						System.out.println("Field:" + docField);
-						if (docField != null)
-							doc.add(docField);
 					}
 				}
 				try {
-					//System.out.println("Doc:" + doc);
 					w.addDocument(doc);
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -142,25 +152,25 @@ public class IndexCreator {
 	}
 	
 	public static void get(String[] args) throws IllegalArgumentException, IllegalAccessException {
-		
+				
 		UserFields user = new UserFields();
 		user.gender = "maschio";
-		user.hashtags = "#pirla";
 		user.ageMax = 15;
 		user.ageMin = 11;
-		user.location = "benebene";
-		user.interest = "to be or not to be aliens";
 		user.follower = 5;
 		user.screenName = "Angelino";
+		String[] asd = {"ciao", "cicco"};
+		ArrayList<String> tweet = new ArrayList<String>();
+		tweet.addAll(Arrays.asList(asd));
+		user.tweet = tweet;
 		
 		UserFields user2 = new UserFields();
 		user2.gender = "femmina";
-		user2.hashtags = "#pirla";
 		
 		
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		uf.add(user);
-		uf.add(user2);
+		//uf.add(user2);
 		//create(uf);
 		
 	}
