@@ -32,7 +32,6 @@ import util.UserFields;
 public class IndexCreator {
 	
 	private static final String[] boostVars = {"follower"};
-	private static final String[] untokenizedVars = {"screenName", "gender"};
 		
 	private static IndexWriter createIndexWriter() {
 		
@@ -141,7 +140,7 @@ public class IndexCreator {
 		}
 	}
 	
-	public void create(ArrayList<UserFields> users) {
+	public static void create(ArrayList<UserFields> users) {
 		// Create index
 		IndexWriter w = createIndexWriter();
 		
@@ -149,27 +148,33 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-	public static void get(String[] args) throws IllegalArgumentException, IllegalAccessException {
+	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
 				
 		UserFields user = new UserFields();
-		user.gender = "maschio";
-		user.ageMax = 15;
-		user.ageMin = 11;
-		user.follower = 5;
+		user.gender = "male";
+		user.age = "13-17";
+		//user.follower = 15;
 		user.screenName = "Angelino";
-		String[] asd = {"ciao", "cicco"};
+		String[] asd = {"beautiful", "interested"};
 		ArrayList<String> tweet = new ArrayList<String>();
 		tweet.addAll(Arrays.asList(asd));
 		user.tweet = tweet;
 		
 		UserFields user2 = new UserFields();
-		user2.gender = "femmina";
+		user2.screenName = "Paolina";
+		user2.gender = "male";
+		user2.age = "18-25";
+		//user2.follower = 15;
+		String[] asd2 = {"mind", "interesting hashtag #gay"};
+		tweet = new ArrayList<String>();
+		tweet.addAll(Arrays.asList(asd2));
+		user2.tweet = tweet;
 		
 		
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		uf.add(user);
-		//uf.add(user2);
-		//create(uf);
+		uf.add(user2);
+		create(uf);
 		
 	}
 

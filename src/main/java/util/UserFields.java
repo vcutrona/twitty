@@ -14,7 +14,6 @@ public class UserFields {
 	public String country;
 	public String profileBigImage;
 	public String gender;
-	public int ageMin;
-	public int ageMax;
+	public String age;
 	public ArrayList<String> tweet = new ArrayList<String>();
 }

@@ -151,9 +151,7 @@ public class UserClassification {
 	        u.screenName = screenName;
 	        u.profileBigImage = user.getOriginalProfileImageURL();
 	        u.follower = user.getFollowersCount();
-	        String[] parts = age.split("-");
-	        u.ageMin = Integer.parseInt(parts[0]); 
-	        u.ageMax = Integer.parseInt(parts[1]); 
+	        u.age = age;
 	        u.tweet = tweets;
 	        uf.add(u);
 		}

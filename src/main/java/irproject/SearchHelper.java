@@ -6,32 +6,38 @@ import org.apache.lucene.queries.CustomScoreQuery;
 import org.apache.lucene.queries.function.FunctionQuery;
 import org.apache.lucene.queries.function.valuesource.LongFieldSource;
 import org.apache.lucene.search.*;
+import org.apache.lucene.search.BooleanClause.Occur;
 
 import java.io.IOException;
 import java.nio.file.FileSystems;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.document.Document;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
-
+import org.apache.lucene.document.FieldType.NumericType;
 import org.apache.lucene.queryparser.classic.QueryParser;
+import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
+import org.apache.lucene.search.highlight.Fragmenter;
+import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.QueryScorer;
+import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.search.IndexSearcher;
-import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.FSDirectory;
-import org.apache.lucene.util.Version;
-import org.apache.lucene.document.Document;
+
+import analyzer.TweetAnalyzer;
+
 
 public class SearchHelper {
 
 	private static IndexSearcher searcher = null;
-	private QueryParser parser = null;
 	Map<String, String> dictionary;
+	private Highlighter tweetHighlighter;
+	private String[] uClassifyRanges = {"13-17", "18-25", "26-35", "36-50", "51-65", "65-100"};
 
 	/**
 	 * Crea un search helper per poter effetture le ricerce
@@ -43,7 +49,6 @@ public class SearchHelper {
 		Path path = FileSystems.getDefault().getPath("logs", "index");
 		dictionary  = ht;
 		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
-		// parser = new QueryParser("interest", new EnglishAnalyzer());
 	}
 
 	public static void main(String args[]) throws IOException, ParseException {
@@ -51,14 +56,15 @@ public class SearchHelper {
 		HashMap<String, String> ht = new HashMap<String, String>();
 		ht.put("tweet", "AND");
 		ht.put("gender", "OR");
+		ht.put("age", "AND");
 
 		SearchHelper se = new SearchHelper(ht);
-		TopDocs topDocs = se.performSearch("lucky", "female", 100);
+		
+		TopDocs topDocs = se.performSearch("beautiful", "female", 17, 100);
 		System.out.println("sto cercando");
-		// obtain the ScoreDoc (= documentID, relevanceScore) array from topDocs
 		ScoreDoc[] hits = topDocs.scoreDocs;
 
-		// retrieve each matching document from the ScoreDoc arry
+		// retrieve each matching document from the ScoreDoc array
 		for (int i = 0; i < hits.length; i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			String name = doc.get("screenName");
@@ -66,47 +72,62 @@ public class SearchHelper {
 			System.out.print(name + " ");
 			System.out.println(follower);
 		}
+		
 	}
 
-
-
-	public TopDocs performSearch(String interest,  String gender, int n)
+	public TopDocs performSearch(String tweet,  String gender, int age, int n)
 			throws IOException, ParseException {
-
 		
-		Query boostQuery = new FunctionQuery(new LongFieldSource("follower"));
-		// city query
-		@SuppressWarnings("deprecation")
-		//Query booleana
-		BooleanQuery booleanQuery = new BooleanQuery();
-		Query query1 = new TermQuery(new Term("tweet", interest));
-		Query query2 = new TermQuery(new Term("gender", gender));
-
-		//Le query sono in and o in or?
-		BooleanClause.Occur shouldTweet;
-		BooleanClause.Occur shouldGender;
-
-		if(this.dictionary.get("tweet") == "AND") {
-			shouldTweet = BooleanClause.Occur.MUST;
-		}
-		else {
-			shouldTweet = BooleanClause.Occur.SHOULD;
-		}
-		if(this.dictionary.get("gender") == "AND") {
-			shouldGender = BooleanClause.Occur.MUST;
-		}
-		else {
-			shouldGender = BooleanClause.Occur.SHOULD;
-		}		
+		BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 		
-		booleanQuery.add(query1, shouldTweet);
-		booleanQuery.add(query2, shouldGender);
-		Query q = new CustomScoreQuery(booleanQuery, (FunctionQuery) boostQuery);
+		//Query sui tweet
+		if (!tweet.isEmpty()){
+			QueryParser parser = new QueryParser("tweet", new TweetAnalyzer());
+			if (tweet.indexOf("\"") == 0 && tweet.lastIndexOf("\"") == tweet.length()-1){
+				parser.setDefaultOperator(Operator.AND);
+			}
+			Query queryTweet = parser.parse(tweet);
+			
+			QueryScorer queryScorerTweet = new QueryScorer(queryTweet, "tweet");
+	        Fragmenter fragment = new SimpleSpanFragmenter(queryScorerTweet, 200);
+
+	        tweetHighlighter = new Highlighter(queryScorerTweet);
+	        tweetHighlighter.setTextFragmenter(fragment);
+
+	        booleanQuery.add(queryTweet, this.getBoolClause("tweet"));
+		}
+		
+		//Query sul genere
+		if (!gender.isEmpty()){
+			Query queryGender = new TermQuery(new Term("gender", gender));
+			booleanQuery.add(queryGender, this.getBoolClause("gender"));
+		}
+		
+		//Query sull'età
+		String ageToSearch = "";
+		for (int i = 0; i < uClassifyRanges.length; ++i) {
+			String ageRange = uClassifyRanges[i];
+			String[] part = ageRange.split("-");
+			if (age >= Integer.valueOf(part[0]) && (age <= Integer.valueOf(part[1]))){ //TODO controlla condizioni
+				ageToSearch = uClassifyRanges[i];
+				break;
+			}
+		}
+		Query queryAge = new TermQuery(new Term("age", ageToSearch));
+		
+		booleanQuery.add(queryAge, this.getBoolClause("age"));
+		
+		//Query sui follower (boost)
+		Query q = new CustomScoreQuery(booleanQuery.build(), new FunctionQuery(new LongFieldSource("follower")));
 
 		return searcher.search(q, n);
 	}
 
 	public Document getDocument(int docId) throws IOException {
 		return searcher.doc(docId);
+	}
+	
+	private Occur getBoolClause(String field) {
+		return (this.dictionary.get(field).equals("AND") ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD);
 	}
 }
