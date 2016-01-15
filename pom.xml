@@ -18,12 +18,20 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-web</artifactId>
         </dependency>
-        
+        <!--  Java Geocder -->
+
+
+     
         <!-- Lucene -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
 			<artifactId>lucene-core</artifactId>
 			<version>5.4.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.google.maps</groupId>
+		    <artifactId>google-maps-services</artifactId>
+		    <version> 0.1.9</version>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.lucene</groupId>

@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import util.UserFields;
+
 import com.google.code.uclassify.client.UClassifyClient;
 import com.google.code.uclassify.client.UClassifyClientFactory;
 import com.uclassify.api._1.responseschema.Classification;
 
+import entity.Locator;
+import entity.UserFields;
 import twitter4j.EntitySupport;
 import twitter4j.HashtagEntity;
 import twitter4j.Paging;
@@ -20,6 +22,7 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.api.TimelinesResources;
 import twitter4j.conf.ConfigurationBuilder;
+import util.GoogleMapsLocator;
 
 import com.uclassify.api._1.responseschema.Class;
 
@@ -127,7 +130,7 @@ public class UserClassification {
 		}
 		return returnClass;
 	}
-	public ArrayList <UserFields> buildUserFieldList (HashSet<User> users) throws TwitterException {
+	public ArrayList <UserFields> buildUserFieldList (HashSet<User> users) throws Exception {
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		for (User user : users) {
 			String screenName = user.getScreenName();
@@ -141,12 +144,22 @@ public class UserClassification {
 				tweetData +=  " " + temp;
 			}
 			
-			String hashTags = this.getUserHashtag(statuses);
 			String age = this.getAge(screenName, tweetData);
 			String gender = this.getGender(screenName, tweetData);
 			String location = user.getLocation();
 			System.out.println("User " + user.getScreenName() + "is a " + gender + " of " + age + " years");
 			UserFields u = new UserFields();
+			//Compute complete location
+			GoogleMapsLocator gp = new GoogleMapsLocator();
+			
+			Locator loc = gp.getLocationData(location);
+			
+			u.city = loc.getLocality();
+			u.address = loc.getAddress();
+			u.latitude = loc.getLatitude();
+			u.longitude = loc.getLongitude();
+			u.country = loc.getCountry();
+			
 	        u.gender = gender;
 	        u.screenName = screenName;
 	        u.profileBigImage = user.getOriginalProfileImageURL();

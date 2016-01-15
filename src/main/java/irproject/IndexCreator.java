@@ -15,6 +15,7 @@ import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.IntField;
@@ -27,12 +28,12 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import analyzer.TweetAnalyzer;
-import util.UserFields;
+import entity.UserFields;
 
 public class IndexCreator {
-	
+
 	private static final String[] boostVars = {"follower"};
-		
+	
 	private static IndexWriter createIndexWriter() {
 		
 		Path path = FileSystems.getDefault().getPath("logs", "index");
@@ -106,6 +107,16 @@ public class IndexCreator {
 								e.printStackTrace();
 							}
 							break;
+						case "double":
+							try {
+								System.out.println("Attribute: " + field.getName() + " Value: " + (double)field.get(user) );
+								doc.add(new DoubleField(field.getName(), (double)field.get(user), Field.Store.YES));
+							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							}
+							break;
 						case "java.util.ArrayList<java.lang.String>":
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (ArrayList<String>)field.get(user) );
@@ -148,7 +159,7 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-	public static void main(String[] args) throws IllegalArgumentException, IllegalAccessException {
+	public static void test(String[] args) throws IllegalArgumentException, IllegalAccessException {
 				
 		UserFields user = new UserFields();
 		user.gender = "male";
