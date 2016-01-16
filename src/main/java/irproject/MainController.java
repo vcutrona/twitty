@@ -3,6 +3,8 @@ package irproject;
 import java.util.ArrayList;
 import java.util.HashSet;
 
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,7 +15,7 @@ import twitter.TweetExtractor;
 import twitter4j.TwitterException;
 import twitter4j.User;
 
-@RestController
+@Controller//@RestController
 public class MainController {
 
     @RequestMapping("/build")
@@ -30,5 +32,11 @@ public class MainController {
     		System.out.println(e.getStackTrace());
 	    	return null;
 	    }
+    }
+    
+    @RequestMapping("/greeting")
+    public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
+        model.addAttribute("name", name);
+        return "greeting";
     }
 }

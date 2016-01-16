@@ -54,7 +54,7 @@ public class SearchHelper {
 		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
 	}
 
-	public static void main(String args[]) throws IOException, ParseException {
+	public static void mxain(String args[]) throws IOException, ParseException {
 
 		HashMap<String, String> ht = new HashMap<String, String>();
 		ht.put("tweet", "OR");
