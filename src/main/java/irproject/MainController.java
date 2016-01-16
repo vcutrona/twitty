@@ -47,7 +47,7 @@ public class MainController {
     @RequestMapping(value="/greeting", method=RequestMethod.GET)
     public String greetingForm(Model model) {
         model.addAttribute("greeting", new Greeting());
-        return "greeting";
+        return "old";
     }
 
     @RequestMapping(value="/greeting", method=RequestMethod.POST)
