@@ -9,13 +9,14 @@ import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
+import util.GoogleMapsLocator;
 
 import java.util.HashSet;
 
 public class TweetExtractor {
 
 	private final Object lock = new Object();
-
+	private final GoogleMapsLocator gml = new GoogleMapsLocator();
 	public HashSet<User> execute() throws TwitterException {
 
 		final HashSet<User> users = new HashSet<User>();
@@ -35,12 +36,14 @@ public class TweetExtractor {
 
 				// Se abbiamo trovato un utente lo salviamo nell'hashset
 				System.out.println("Questo utente: " + user.getLocation() + " " + user.getLang() + " " + user.getStatusesCount());
-				if ((user.getLocation() != null) && (user.getStatusesCount() > 200) && (user.getLang().equals("en"))) {
+				String location = user.getLocation();
+				//location non nulla ed esiste in google maps
+				if (location != null && !location.isEmpty() && (gml.getLocationData(location) != null) && (user.getStatusesCount() > 200) && (user.getLang().equals("en"))) {
 					users.add(user);
 					System.out.println("Adesso abbiamo " + users.size() + " utenti");
 					// System.out.println(user.getName());
 				}
-				if (users.size() == 10) { // TODO rimettere a 1000!!!!
+				if (users.size() >= 30) { // TODO rimettere a 1000!!!!
 					synchronized (lock) {
 						lock.notify();
 					}

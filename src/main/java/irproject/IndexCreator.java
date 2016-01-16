@@ -18,6 +18,7 @@ import org.apache.lucene.document.Document;
 import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.Field;
 import org.apache.lucene.document.FieldType;
+import org.apache.lucene.document.GeoPointField;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.TextField;
@@ -28,6 +29,7 @@ import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
 import analyzer.TweetAnalyzer;
+import entity.Locator;
 import entity.UserFields;
 
 public class IndexCreator {
@@ -92,6 +94,22 @@ public class IndexCreator {
 								e.printStackTrace();
 							}
 							break;
+						case "class entity.Locator":
+							try {
+								//System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
+								if (field.get(user) != null) {
+									Locator lc = (Locator) field.get(user);
+									doc.add(new GeoPointField("geolocation", lc.getLongitude(), lc.getLatitude(), Field.Store.YES));
+									doc.add(new TextField("city", lc.getLocality(), Field.Store.YES));
+									doc.add(new TextField("country", lc.getCountry(), Field.Store.YES));
+									doc.add(new TextField("address", lc.getAddress(), Field.Store.YES));
+								}
+							} catch (IllegalArgumentException e) {
+								e.printStackTrace();
+							} catch (IllegalAccessException e) {
+								e.printStackTrace();
+							}
+							break;	
 						case "int":
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (int)field.get(user) );
@@ -101,16 +119,6 @@ public class IndexCreator {
 								} else {
 									doc.add(new IntField(field.getName(), (int)field.get(user), Field.Store.YES));
 								}
-							} catch (IllegalArgumentException e) {
-								e.printStackTrace();
-							} catch (IllegalAccessException e) {
-								e.printStackTrace();
-							}
-							break;
-						case "double":
-							try {
-								System.out.println("Attribute: " + field.getName() + " Value: " + (double)field.get(user) );
-								doc.add(new DoubleField(field.getName(), (double)field.get(user), Field.Store.YES));
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
 							} catch (IllegalAccessException e) {

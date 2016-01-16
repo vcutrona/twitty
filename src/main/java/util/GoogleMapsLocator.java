@@ -64,14 +64,9 @@ public class GoogleMapsLocator {
 		lc.setCountry(country);
 		return lc;
 		} catch (Exception e) {
-			Locator lc = new Locator();
+			//Se si genera un eccezione ritorno nullo
 
-			lc.setAddress("");
-			lc.setLongitude(0);
-			lc.setLatitude(0);
-			lc.setLocality("");
-			lc.setCountry("");
-			return lc;			 
+			return null;			 
 		}
 		
 	}

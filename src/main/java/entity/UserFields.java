@@ -13,11 +13,7 @@ public class UserFields {
 	
 	public int follower;
 	public String screenName;
-	public String city;
-	public String country;
-	public double latitude;
-	public double longitude;
-	public String address;
+	public Locator locator;
 	public String profileBigImage;
 	public String gender;
 	public String age;

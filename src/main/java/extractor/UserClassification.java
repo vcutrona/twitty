@@ -154,12 +154,7 @@ public class UserClassification {
 			
 			Locator loc = gp.getLocationData(location);
 			
-			u.city = loc.getLocality();
-			u.address = loc.getAddress();
-			u.latitude = loc.getLatitude();
-			u.longitude = loc.getLongitude();
-			u.country = loc.getCountry();
-			
+			u.locator = loc;			
 	        u.gender = gender;
 	        u.screenName = screenName;
 	        u.profileBigImage = user.getOriginalProfileImageURL();

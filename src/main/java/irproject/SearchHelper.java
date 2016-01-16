@@ -26,6 +26,9 @@ import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.similarities.BM25Similarity;
+import org.apache.lucene.search.similarities.LMDirichletSimilarity;
+import org.apache.lucene.search.similarities.LMSimilarity;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 
@@ -51,31 +54,29 @@ public class SearchHelper {
 		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
 	}
 
-	public static void test(String args[]) throws IOException, ParseException {
+	public static void main(String args[]) throws IOException, ParseException {
 
 		HashMap<String, String> ht = new HashMap<String, String>();
-		ht.put("tweet", "AND");
+		ht.put("tweet", "OR");
 		ht.put("gender", "OR");
-		ht.put("age", "AND");
+		ht.put("age", "OR");
+		ht.put("geolocation", "AND");
 
 		SearchHelper se = new SearchHelper(ht);
 		
-		TopDocs topDocs = se.performSearch("beautiful", "female", 17, 100);
+		TopDocs topDocs = se.performSearch("beautiful", "female", 17, -96.79698789999999, 32.7766642, 200, 100);
 		System.out.println("sto cercando");
 		ScoreDoc[] hits = topDocs.scoreDocs;
-
 		// retrieve each matching document from the ScoreDoc array
 		for (int i = 0; i < hits.length; i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			String name = doc.get("screenName");
-			String follower = doc.get("follower");
-			System.out.print(name + " ");
-			System.out.println(follower);
+			System.out.print(name + " punteggio:  " + hits[i].score + " ");
 		}
 		
 	}
 
-	public TopDocs performSearch(String tweet,  String gender, int age, int n)
+	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, double radius, int n)
 			throws IOException, ParseException {
 		
 		BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
@@ -117,9 +118,14 @@ public class SearchHelper {
 		
 		booleanQuery.add(queryAge, this.getBoolClause("age"));
 		
+		//query sulla geolocalizzazione
+		GeoPointDistanceQuery queryGeolocation = new GeoPointDistanceQuery("geolocation", longitude, latitude, radius);
+		booleanQuery.add(queryGeolocation, this.getBoolClause("geolocation"));
+
+		
 		//Query sui follower (boost)
 		Query q = new CustomScoreQuery(booleanQuery.build(), new FunctionQuery(new LongFieldSource("follower")));
-
+		//searcher.setSimilarity(new LMDirichletSimilarity()); 
 		return searcher.search(q, n);
 	}
 
