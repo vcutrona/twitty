@@ -110,24 +110,19 @@ public class MainController {
     	
 				
 	    ArrayList<UserFields> list = new ArrayList<UserFields>();
-	    UserModel a = new UserModel();
+	    UserFields a = new UserFields();
 	    UserModel b = new UserModel();
 
 	    a.screenName = "fb_vinid";
 		User user = twitter.showUser(a.screenName);
-		a.setImageURL(user.getBiggerProfileImageURL());
+		a.profileImageURL = user.getOriginalProfileImageURL();
+		a.coverImageURL = (user.getProfileBannerURL() != null ? user.getProfileBannerURL() : user.getProfileBackgroundImageURL());
+		a.follower = user.getFollowersCount();
+		a.description = user.getDescription();
+	    a.numberOfTweets = user.getStatusesCount();
+	    a.name = user.getName();
+		list.add(a);
 		
-	    b.screenName = "tu";
-	    list.add(a);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
-	    list.add(b);
 	    model.addAttribute("u", list);
 	
 		return "endindex";

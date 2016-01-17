@@ -17,6 +17,7 @@ public class TweetExtractor {
 
 	private final Object lock = new Object();
 	private final GoogleMapsLocator gml = new GoogleMapsLocator();
+	private final int totalUser = 1; 
 	public HashSet<User> execute() throws TwitterException {
 
 		final HashSet<User> users = new HashSet<User>();
@@ -43,7 +44,7 @@ public class TweetExtractor {
 					System.out.println("Adesso abbiamo " + users.size() + " utenti");
 					// System.out.println(user.getName());
 				}
-				if (users.size() >= 50) { // TODO rimettere a 1000!!!!
+				if (users.size() >= totalUser) {
 					synchronized (lock) {
 						lock.notify();
 					}

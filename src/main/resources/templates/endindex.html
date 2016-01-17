@@ -197,7 +197,7 @@
 }
 
 .card.hovercard .cardheader {
-    background: url("http://lorempixel.com/850/280/nature/4/");
+    /*background: url("http://lorempixel.com/850/280/nature/4/");*/
     background-size: cover;
     height: 135px;
 }
@@ -262,95 +262,42 @@
 </head>
 <body>
 <link href="//maxcdn.bootstrapcdn.com/font-awesome/4.3.0/css/font-awesome.min.css" rel="stylesheet"/>
-<div class="container">
-	<div class="row">
-		<div class="col-md-3" th:each="user : ${u}">
-
-            <div class="card hovercard">
-                <div class="cardheader">
-
-                </div>
-                <div class="avatar">
-                    <img alt="" src="http://lorempixel.com/100/100/people/9/"/>
-                </div>
-                <div class="info">
-                    <div class="title">
-                        <a target="_blank" href="http://scripteden.com/">Script Eden</a>
-                    </div>
-                    <div class="desc">Passionate designer</div>
-                    <div class="desc">Curious developer</div>
-                    <div class="desc">Tech geek</div>
-                </div>
-                <div class="bottom">
-                    <a class="btn btn-primary btn-twitter btn-sm" href="https://twitter.com/webmaniac">
-                        <i class="fa fa-twitter"></i>
-                    </a>
-                    <a class="btn btn-danger btn-sm" rel="publisher"
-                       href="https://plus.google.com/+ahmshahnuralam">
-                        <i class="fa fa-google-plus"></i>
-                    </a>
-                    <a class="btn btn-primary btn-sm" rel="publisher"
-                       href="https://plus.google.com/shahnuralam">
-                        <i class="fa fa-facebook"></i>
-                    </a>
-                    <a class="btn btn-warning btn-sm" rel="publisher" href="https://plus.google.com/shahnuralam">
-                        <i class="fa fa-behance"></i>
-                    </a>
-                </div>
-            </div>
-
-        </div>
-
-	</div>
-</div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-	<div class="col-md-4">
-		<h1 th:text="'Top ' + ${u.size()} + ' indexed users'">Indexed users</h1>
-		<ul class="list-group">	
-			<li class="list-group-item" th:each="user : ${u}">	
-				<div class="media">
-				  	<div class="media-left">
-						<div align="center" style="width: 64px; height: 64px;">
-					    	<a th:href="${user.profileURL}"> 
-					    		<img class="media-object" th:src="${user.imageURL}" alt="User Profile pic" style="max-width: 100%; max-height: 100%;" /> 
-					    	</a>
-					    </div>
-				  	</div>
-				<div class="media-body">
-				    <h4 class="media-heading" th:text="${user.screenName}"></h4>
-				    <label th:text="'Follower: ' + ${user.follower}"></label>
-				  </div>
-				</div>
-			</li>
-		</ul>
+	<div class="container">
+		<div class="row">
+			<div class="col-md-3" th:each="user : ${u}">
 	
-		<a href="/">Torna alla home</a>
+	            <div class="card hovercard">
+	                <div class="cardheader" th:style="'background:url(' + ${user.coverImageURL} + ');'">
 	
+	                </div>
+	                <div class="avatar">
+	                    <img alt="Profile pic" th:src="${user.profileImageURL}" />
+	                </div>
+	                <div class="info">
+	                    <div class="title">
+	                        <a target="_blank" th:text="${user.name} + ' @' + ${user.screenName}" th:href="'https://twitter.com/' + ${user.screenName}">Script Eden</a>
+	                    </div>
+	                    <div class="desc" th:text="${user.description}">Passionate designer</div>
+	                    <div class="desc" th:text="${user.follower} + ' follower'">Curious developer</div>
+	                    <div class="desc" th:text="${user.numberOfTweets} + ' tweet'">Tech geek</div>
+	                </div>
+	                <div class="bottom">
+	                    <a class="btn btn-primary btn-twitter btn-sm" th:href="'https://twitter.com/' + ${user.screenName}">
+	                        <i class="fa fa-twitter"></i>
+	                    </a>
+	                    
+	                    <a class="btn btn-warning btn-sm" rel="publisher" href="https://plus.google.com/shahnuralam">
+	                        <i class="fa fa-plus"></i>
+	                    </a>
+	                </div>
+	            </div>
+	
+	        </div>
+	
+		</div>
 	</div>
+
+	
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script></body>
 </html>

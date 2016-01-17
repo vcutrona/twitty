@@ -157,10 +157,14 @@ public class UserClassification {
 			u.locator = loc;			
 	        u.gender = gender;
 	        u.screenName = screenName;
-	        u.profileBigImage = user.getOriginalProfileImageURL();
+	        u.profileImageURL = user.getOriginalProfileImageURL();
+	        u.coverImageURL = user.getProfileBannerURL();
 	        u.follower = user.getFollowersCount();
 	        u.age = age;
 	        u.tweet = tweets;
+	        u.description = user.getDescription();
+	        u.name = user.getName();
+	        u.numberOfTweets = user.getStatusesCount();	        
 	        uf.add(u);
 		}
 		return uf;

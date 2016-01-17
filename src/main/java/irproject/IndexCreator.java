@@ -35,6 +35,7 @@ import entity.UserFields;
 public class IndexCreator {
 
 	private static final String[] boostVars = {"follower"};
+	private static final String[] notStored = {"profileImageURL", "coverImageURL", "numberOfTweets", "name", "description", "screenName"};
 	
 	private static IndexWriter createIndexWriter() {
 		
@@ -87,7 +88,8 @@ public class IndexCreator {
 							try {
 								System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
 								if (field.get(user) != null) {
-									doc.add(new TextField(field.getName(), (String)field.get(user), Field.Store.YES));
+									doc.add(new TextField(field.getName(), (String)field.get(user), 
+											(Arrays.asList(notStored).contains(field.getName()) ? Field.Store.NO : Field.Store.YES)));
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -97,7 +99,7 @@ public class IndexCreator {
 							break;
 						case "class entity.Locator":
 							try {
-								//System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
+								System.out.println("Attribute: " + field.getName() + " Value (latitude): " + ((Locator)field.get(user)).getLatitude() );
 								if (field.get(user) != null) {
 									Locator lc = (Locator) field.get(user);
 									doc.add(new GeoPointField("geolocation", lc.getLongitude(), lc.getLatitude(), Field.Store.YES));
@@ -118,7 +120,8 @@ public class IndexCreator {
 									System.out.println("Faccio boost");
 									doc.add(new NumericDocValuesField(field.getName(), (int)field.get(user)));
 								} else {
-									doc.add(new IntField(field.getName(), (int)field.get(user), Field.Store.YES));
+									doc.add(new IntField(field.getName(), (int)field.get(user), 
+											(Arrays.asList(notStored).contains(field.getName()) ? Field.Store.NO : Field.Store.YES)));
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();

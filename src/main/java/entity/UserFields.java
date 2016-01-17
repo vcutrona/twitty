@@ -4,7 +4,6 @@ import java.util.ArrayList;
 
 /**
  * Class used for the creation of the index in Lucene. Used with reflection.
- *
  */
 public class UserFields {
 	
@@ -14,10 +13,13 @@ public class UserFields {
 	public int follower;
 	public String screenName;
 	public Locator locator;
-	public String profileBigImage;
+	public String profileImageURL;
+	public String coverImageURL;
 	public String gender;
 	public String age;
 	public ArrayList<String> tweet = new ArrayList<String>();
-	
+	public int numberOfTweets;
+	public String name;
+	public String description;
 	
 }
