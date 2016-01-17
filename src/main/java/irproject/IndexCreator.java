@@ -41,9 +41,10 @@ public class IndexCreator {
 		Path path = FileSystems.getDefault().getPath("logs", "index");
 
 		//delete old index
-		for (File file: Arrays.asList(path.toFile().listFiles())) {
-			file.delete();
-		}
+		if (path.toFile().isDirectory())
+			for (File file: Arrays.asList(path.toFile().listFiles())) {
+				file.delete();
+			}
 		
 		Directory index = null;
 		try {

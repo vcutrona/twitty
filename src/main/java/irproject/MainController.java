@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import entity.Greeting;
 import entity.UserFields;
+import entity.Users;
 import extractor.UserClassification;
 import twitter.TweetExtractor;
 import twitter4j.TwitterException;
@@ -22,18 +23,21 @@ import twitter4j.User;
 public class MainController {
 
     @RequestMapping("/build")
-    public ArrayList <UserFields> build() throws Exception {
+    public String build(Model model) {
     	try {
 	    	TweetExtractor stream = new TweetExtractor();
 			HashSet<User> users = stream.execute();
 			UserClassification cinni = new UserClassification();
 			ArrayList<UserFields> list = cinni.buildUserFieldList(users);
+			//Users u = new Users();
 			IndexCreator.create(list);
-			return list;
-    	} catch(TwitterException e) {
+			//u.users = list;
+			model.addAttribute("u", list);
+			return "endindex";
+    	} catch(Exception e) {
     		System.out.println(e.getMessage());
     		System.out.println(e.getStackTrace());
-	    	return null;
+	    	return "error";
 	    }
     }
     
@@ -54,5 +58,10 @@ public class MainController {
     public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
         model.addAttribute("greeting", greeting);
         return "result";
+    }
+    
+    @RequestMapping(value="/")
+    public String index(Model model) {
+        return "index";
     }
 }
