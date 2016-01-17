@@ -10,10 +10,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import entity.Greeting;
 import entity.UserFields;
-import entity.Users;
 import extractor.UserClassification;
 import twitter.TweetExtractor;
 import twitter4j.TwitterException;
@@ -28,11 +28,14 @@ public class MainController {
 	    	TweetExtractor stream = new TweetExtractor();
 			HashSet<User> users = stream.execute();
 			UserClassification cinni = new UserClassification();
-			ArrayList<UserFields> list = cinni.buildUserFieldList(users);
+			ArrayList<UserFields> uf = cinni.buildUserFieldList(users);
 			//Users u = new Users();
-			IndexCreator.create(list);
+			IndexCreator.create(uf);
 			//u.users = list;
-			model.addAttribute("u", list);
+			if (uf.size() > 5)
+				model.addAttribute("u", uf.subList(0, 5));
+			else
+				model.addAttribute("u", uf);
 			return "endindex";
     	} catch(Exception e) {
     		System.out.println(e.getMessage());
@@ -63,5 +66,20 @@ public class MainController {
     @RequestMapping(value="/")
     public String index(Model model) {
         return "index";
+    }
+    
+    @RequestMapping(value = "/demo")
+    public String getdata(Model model) {
+
+	    ArrayList<UserFields> list = new ArrayList<UserFields>();
+	    UserFields a = new UserFields();
+	    UserFields b = new UserFields();
+	    a.screenName = "io";
+	    b.screenName = "tu";
+	    list.add(a);
+	    list.add(b);
+	    model.addAttribute("u", list);
+	
+		return "endindex";
     }
 }

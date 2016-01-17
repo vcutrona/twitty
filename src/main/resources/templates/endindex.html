@@ -3,13 +3,41 @@
 <head>
     <title>Getting Started: Handling Form Submission</title>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    
+    <!-- Bootstrap itself -->
+	<!-- Latest compiled and minified CSS -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous" />
+	
+	<!-- Optional theme -->
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous" />
+
+	<!-- Fonts -->
+	<link href="http://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.min.css" rel="stylesheet" type="text/css" />
+	<link href='http://fonts.googleapis.com/css?family=Wire+One' rel='stylesheet' type='text/css' />
+    
 </head>
 <body>
-	<h1>Result</h1>
-    <c:forEach items = "${model.u}" var="user">
-             <p th:text="'Name: ' + ${user.screenName} + 'Follower: ' + ${user.follower}" />
-    </c:forEach>
-    
-    <a href="/">Torna alla home</a>
-</body>
+	<div class="col-md-4">
+		<h1 th:text="'Top ' + ${u.size()} + ' indexed users'">Indexed users</h1>
+		<ul class="list-group">	
+			<li class="list-group-item" th:each="user : ${u}">	
+				<div class="media">
+				  	<div class="media-left">
+						<div align="center" style="width: 64px; height: 64px;">
+					    	<img class="media-object" th:src="${user.profileBigImage}" alt="User Profile pic" style="max-width: 100%; max-height: 100%;" />
+					    </div>
+				  	</div>
+				<div class="media-body">
+				    <h4 class="media-heading" th:text="${user.screenName}"></h4>
+				    <label th:text="'Follower: ' + ${user.follower}"></label>
+				  </div>
+				</div>
+			</li>
+		</ul>
+	
+		<a href="/">Torna alla home</a>
+	
+	</div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js" integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS" crossorigin="anonymous"></script></body>
 </html>
