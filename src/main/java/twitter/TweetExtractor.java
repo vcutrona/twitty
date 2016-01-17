@@ -43,7 +43,7 @@ public class TweetExtractor {
 					System.out.println("Adesso abbiamo " + users.size() + " utenti");
 					// System.out.println(user.getName());
 				}
-				if (users.size() >= 1) { // TODO rimettere a 1000!!!!
+				if (users.size() >= 50) { // TODO rimettere a 1000!!!!
 					synchronized (lock) {
 						lock.notify();
 					}

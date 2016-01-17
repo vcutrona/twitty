@@ -14,13 +14,18 @@ import org.springframework.web.servlet.ModelAndView;
 
 import entity.Greeting;
 import entity.UserFields;
+import entity.UserModel;
 import extractor.UserClassification;
 import twitter.TweetExtractor;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.User;
+import twitter4j.conf.ConfigurationBuilder;
 
 @Controller//@RestController
 public class MainController {
+	
 
     @RequestMapping("/build")
     public String build(Model model) {
@@ -68,15 +73,60 @@ public class MainController {
         return "index";
     }
     
+    @RequestMapping(value="/user")
+    public String showUser(@RequestParam(value="screen_name") String screenName, Model model) {
+    	ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setDebugEnabled(true).setOAuthConsumerKey("2PexuEeruTahis27ZG3QxrEYh")
+				.setOAuthConsumerSecret("dfxizJjS5w9FqYDGQYgKI42DKXsw1wAcnIQTJU616pBIxrXKJh")
+				.setOAuthAccessToken("2332157006-BXKX6flDvtsaGCD4NBj8IzL5xl8DUyaL952aow2")
+				.setOAuthAccessTokenSecret("6ErzotI2jxbVYeeIbstUuQBp3FRvXwy25yKwbZTM9XQhy");
+		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+		User user = null;
+		try {
+			user = twitter.showUser(screenName);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		
+		if(user==null) {
+			return "error";
+		}
+		
+		int friends = user.getFriendsCount();
+		
+		
+        return "show_user";
+    }
+    
     @RequestMapping(value = "/demo")
-    public String getdata(Model model) {
+    public String getdata(Model model) throws TwitterException {
 
+    	ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setDebugEnabled(true).setOAuthConsumerKey("2PexuEeruTahis27ZG3QxrEYh")
+				.setOAuthConsumerSecret("dfxizJjS5w9FqYDGQYgKI42DKXsw1wAcnIQTJU616pBIxrXKJh")
+				.setOAuthAccessToken("2332157006-BXKX6flDvtsaGCD4NBj8IzL5xl8DUyaL952aow2")
+				.setOAuthAccessTokenSecret("6ErzotI2jxbVYeeIbstUuQBp3FRvXwy25yKwbZTM9XQhy");
+		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+    	
+				
 	    ArrayList<UserFields> list = new ArrayList<UserFields>();
-	    UserFields a = new UserFields();
-	    UserFields b = new UserFields();
-	    a.screenName = "io";
+	    UserModel a = new UserModel();
+	    UserModel b = new UserModel();
+
+	    a.screenName = "fb_vinid";
+		User user = twitter.showUser(a.screenName);
+		a.setImageURL(user.getBiggerProfileImageURL());
+		
 	    b.screenName = "tu";
 	    list.add(a);
+	    list.add(b);
+	    list.add(b);
+	    list.add(b);
+	    list.add(b);
+	    list.add(b);
+	    list.add(b);
+	    list.add(b);
+	    list.add(b);
 	    list.add(b);
 	    model.addAttribute("u", list);
 	

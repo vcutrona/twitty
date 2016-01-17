@@ -18,4 +18,6 @@ public class UserFields {
 	public String gender;
 	public String age;
 	public ArrayList<String> tweet = new ArrayList<String>();
+	
+	
 }
