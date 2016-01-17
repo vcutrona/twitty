@@ -45,12 +45,22 @@
 				<h1 class="title">Twitter friends</h1>
 				<h2 class="subtitle">Find information about users</h2>
                 
-                <form action="#" th:action="@{/greeting}" th:object="${greeting}" method="post">
+                <form action="#" th:action="@{/search}" th:object="${search}" method="post">
                 	<div class="form-group">
-                        <label>Id:</label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{id}" />
-                        <label>Message: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{content}" />
+                        <label>Interest: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{interest}" />
+                        <label>Age: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{age}" />
+                        <label>Gender: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{gender}" />
+                        <label>Latitude: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{latitude}" />
+                        <label>Longitude: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{longitude}" />
+                        <label>Radius: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{radius}" />
+                        <label>Number: </label>
+                        <input type="text" class="form-control" name="myquery" th:field="*{number}" />
                     </div>
                     
                     <button type="submit" class="btn btn-default">Submit</button> <button type="reset" class="btn btn-default">Reset</button>

@@ -1,8 +1,14 @@
 package irproject;
 
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 
+import org.apache.lucene.document.Document;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.search.ScoreDoc;
+import org.apache.lucene.search.TopDocs;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -13,6 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.ModelAndView;
 
 import entity.Greeting;
+import entity.Search;
 import entity.UserFields;
 import entity.UserModel;
 import extractor.UserClassification;
@@ -56,17 +63,46 @@ public class MainController {
         return "greeting";
     }
     */
-    @RequestMapping(value="/greeting", method=RequestMethod.GET)
-    public String greetingForm(Model model) {
-        model.addAttribute("greeting", new Greeting());
-        return "old";
-    }
 
+    /*
     @RequestMapping(value="/greeting", method=RequestMethod.POST)
     public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
         model.addAttribute("greeting", greeting);
         return "result";
     }
+    */
+    @RequestMapping(value="/search", method=RequestMethod.GET)
+    public String greetingForm(Model model) {
+        model.addAttribute("search", new Search());
+        return "greeting";
+    }
+    @RequestMapping(value="/search", method=RequestMethod.POST)
+    public String search(@ModelAttribute Search search,
+    		Model model) throws IOException, ParseException, TwitterException {
+    	
+		HashMap<String, String> ht = new HashMap<String, String>();
+		ht.put("tweet", "OR");
+		ht.put("gender", "OR");
+		ht.put("age", "OR");
+		ht.put("geolocation", "OR");
+
+		SearchHelper se = new SearchHelper(ht); 
+    	ArrayList<UserModel> list = se.search(
+    			search.getInterest(), 
+    			search.getGender(), 
+    			search.getAge(),
+    			search.getLongitude(), 
+    			search.getLatitude(), 
+    			search.getRadius(), 
+    			search.getNumber());
+		
+		double maxScore = list.get(0).getScore();
+	    model.addAttribute("u", list);
+	    model.addAttribute("max_score", maxScore);
+		
+		return "endindex";
+    }
+    
     
     @RequestMapping(value="/")
     public String index(Model model) {
@@ -121,6 +157,8 @@ public class MainController {
 		a.description = user.getDescription();
 	    a.numberOfTweets = user.getStatusesCount();
 	    a.name = user.getName();
+		list.add(a);
+		list.add(a);
 		list.add(a);
 		
 	    model.addAttribute("u", list);

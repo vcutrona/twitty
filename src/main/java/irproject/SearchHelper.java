@@ -33,6 +33,12 @@ import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 
 import analyzer.TweetAnalyzer;
+import entity.UserModel;
+import twitter4j.Twitter;
+import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
+import twitter4j.User;
+import twitter4j.conf.ConfigurationBuilder;
 
 
 public class SearchHelper {
@@ -54,29 +60,44 @@ public class SearchHelper {
 		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
 	}
 
-	public static void mxain(String args[]) throws IOException, ParseException {
-
-		HashMap<String, String> ht = new HashMap<String, String>();
-		ht.put("tweet", "OR");
-		ht.put("gender", "OR");
-		ht.put("age", "OR");
-		ht.put("geolocation", "AND");
-
-		SearchHelper se = new SearchHelper(ht);
+	public ArrayList<UserModel> search(String tweet,  String gender, int age, double longitude, double latitude, int d, int n) throws IOException, ParseException, TwitterException {
 		
-		TopDocs topDocs = se.performSearch("beautiful", "female", 17, -96.79698789999999, 32.7766642, 200, 100);
+		TopDocs topDocs = this.performSearch(tweet, gender, age, longitude, latitude, d, 100);
 		System.out.println("sto cercando");
 		ScoreDoc[] hits = topDocs.scoreDocs;
+    	ConfigurationBuilder cb = new ConfigurationBuilder();
+		cb.setDebugEnabled(true).setOAuthConsumerKey("2PexuEeruTahis27ZG3QxrEYh")
+				.setOAuthConsumerSecret("dfxizJjS5w9FqYDGQYgKI42DKXsw1wAcnIQTJU616pBIxrXKJh")
+				.setOAuthAccessToken("2332157006-BXKX6flDvtsaGCD4NBj8IzL5xl8DUyaL952aow2")
+				.setOAuthAccessTokenSecret("6ErzotI2jxbVYeeIbstUuQBp3FRvXwy25yKwbZTM9XQhy");
+		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+		
 		// retrieve each matching document from the ScoreDoc array
+		ArrayList<UserModel> uml = new ArrayList<>();
 		for (int i = 0; i < hits.length; i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			String name = doc.get("screenName");
 			System.out.print(name + " punteggio:  " + hits[i].score + " ");
+		    
+			UserModel um = new UserModel();
+			um.screenName = name;
+			
+			//user from twitter
+			User user = twitter.showUser(um.screenName);
+
+			um.profileImageURL = user.getOriginalProfileImageURL();
+			um.coverImageURL = (user.getProfileBannerURL() != null ? user.getProfileBannerURL() : user.getProfileBackgroundImageURL());
+			um.follower = user.getFollowersCount();
+			um.description = user.getDescription();
+			um.numberOfTweets = user.getStatusesCount();
+			um.name = user.getName();
+			um.setScore(hits[i].score);
+			uml.add(um);
 		}
-		
+		return uml;
 	}
 
-	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, double radius, int n)
+	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, int radius, int n)
 			throws IOException, ParseException {
 		
 		BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
