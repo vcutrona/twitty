@@ -26,7 +26,7 @@ import entity.UserFields;
 
 public class TweetExtractor {
 
-	private final int TOTALUSER = 100;
+	private final int TOTALUSER = 1000;
 	
 	private final Object lock = new Object();
 	private static GoogleMapsLocator gml;

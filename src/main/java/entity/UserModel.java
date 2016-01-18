@@ -1,8 +1,10 @@
 package entity;
 
+import java.util.ArrayList;
 
 public class UserModel extends UserFields {
 	private double score;
+	private ArrayList<String> fragments;
 	
 	public double getScore() {
 		return score;
@@ -10,4 +12,13 @@ public class UserModel extends UserFields {
 	public void setScore(double score) {
 		this.score = score;
 	}
+	
+	public ArrayList<String> getFragments() {
+		return fragments;
+	}
+	public void setFragments(ArrayList<String> fragments) {
+		this.fragments = fragments;
+	}
+	
+	
 }

@@ -1,6 +1,8 @@
 package irproject;
 
 import org.apache.lucene.index.DirectoryReader;
+import org.apache.lucene.index.IndexReader;
+import org.apache.lucene.index.IndexableField;
 import org.apache.lucene.index.Term;
 import org.apache.lucene.queries.CustomScoreQuery;
 import org.apache.lucene.queries.function.FunctionQuery;
@@ -15,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.lucene.analysis.TokenStream;
+import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.FieldType.NumericType;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -24,8 +28,11 @@ import org.apache.lucene.search.Query;
 import org.apache.lucene.search.TopDocs;
 import org.apache.lucene.search.highlight.Fragmenter;
 import org.apache.lucene.search.highlight.Highlighter;
+import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
+import org.apache.lucene.search.highlight.TextFragment;
+import org.apache.lucene.search.highlight.TokenSources;
 import org.apache.lucene.search.similarities.BM25Similarity;
 import org.apache.lucene.search.similarities.LMDirichletSimilarity;
 import org.apache.lucene.search.similarities.LMSimilarity;
@@ -46,7 +53,7 @@ public class SearchHelper {
 	Map<String, String> dictionary;
 	private Highlighter tweetHighlighter;
 	private String[] uClassifyRanges = {"13-17", "18-25", "26-35", "36-50", "51-65", "65-100"};
-
+	private IndexReader indexReader;
 	/**
 	 * Crea un search helper per poter effetture le ricerce
 	 * @param ht HashMap con all'interno i campi 
@@ -56,7 +63,8 @@ public class SearchHelper {
 	public SearchHelper(HashMap<String, String> ht) throws IOException {
 		Path path = FileSystems.getDefault().getPath("logs", "index");
 		dictionary  = ht;
-		searcher = new IndexSearcher(DirectoryReader.open(FSDirectory.open(path)));
+		this.indexReader = DirectoryReader.open(FSDirectory.open(path));
+		searcher = new IndexSearcher(indexReader);
 	}
 
 	public ArrayList<UserModel> search(String tweet,  String gender, int age, double longitude, double latitude, int d, int n) throws IOException, ParseException, TwitterException {
@@ -82,6 +90,26 @@ public class SearchHelper {
 			um.name = doc.get("name");
 			um.setScore(hits[i].score);
 			uml.add(um);
+			System.out.println(um.name);
+			
+			IndexableField[] tweets = doc.getFields("tweet");
+			for (IndexableField field : tweets) {
+                TokenStream tokenStream = new TweetAnalyzer().tokenStream("", field.stringValue());
+                TextFragment[] fragments = null;
+				try {
+					fragments = this.tweetHighlighter.getBestTextFragments(tokenStream, field.stringValue(), false, 5);
+				} catch (InvalidTokenOffsetsException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+                for (TextFragment t : fragments) {
+                	if (t.getScore() > 0.0)
+                		um.getFragments().add(t.toString());
+                }
+            }
+
+
 		}
 		return uml;
 	}
