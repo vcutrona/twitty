@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 public class UserModel extends UserFields {
 	private double score;
-	private ArrayList<String> fragments;
+	public ArrayList<String> fragments = new ArrayList<>();
 	
 	public double getScore() {
 		return score;

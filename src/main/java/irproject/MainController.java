@@ -83,7 +83,7 @@ public class MainController {
 		    model.addAttribute("u", list);
 		    model.addAttribute("max_score", maxScore);
 			
-			return "showresults";
+			return "user";
 		} else {
 			return "noresults";
 		}
