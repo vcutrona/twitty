@@ -40,7 +40,6 @@ import twitter4j.TwitterFactory;
 import twitter4j.User;
 import twitter4j.conf.ConfigurationBuilder;
 
-
 public class SearchHelper {
 
 	private static IndexSearcher searcher = null;
@@ -71,7 +70,7 @@ public class SearchHelper {
 		for (int i = 0; i < hits.length; i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			String name = doc.get("screenName");
-			System.out.print(name + " punteggio:  " + hits[i].score + " ");
+			System.out.println(name + " punteggio:  " + hits[i].score + " ");
 		    
 			UserModel um = new UserModel();
 			um.screenName = name;
@@ -87,7 +86,7 @@ public class SearchHelper {
 		return uml;
 	}
 
-	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, int radius, int n)
+	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, double radius, int n)
 			throws IOException, ParseException {
 		
 		BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
@@ -130,6 +129,8 @@ public class SearchHelper {
 		booleanQuery.add(queryAge, this.getBoolClause("age"));
 		
 		//query sulla geolocalizzazione
+		if (radius == 0)
+			radius = 0.00001;
 		GeoPointDistanceQuery queryGeolocation = new GeoPointDistanceQuery("geolocation", longitude, latitude, radius);
 		booleanQuery.add(queryGeolocation, this.getBoolClause("geolocation"));
 
@@ -146,5 +147,20 @@ public class SearchHelper {
 	
 	private Occur getBoolClause(String field) {
 		return (this.dictionary.get(field).equals("AND") ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD);
+	}
+	
+	public static void xmain(String[] args) throws IOException, ParseException, TwitterException {
+		HashMap<String, String> ht = new HashMap<String, String>();
+		ht.put("tweet", "OR");
+		ht.put("gender", "OR");
+		ht.put("age", "OR");
+		ht.put("geolocation", "OR");
+
+		SearchHelper se = new SearchHelper(ht); 
+    	ArrayList<UserModel> list = se.search("", "male", 0, 0, 0, 1, 0);
+		
+    	for (UserModel u : list) {
+    		System.out.println(u.screenName);
+    	}		
 	}
 }

@@ -98,11 +98,16 @@ public class MainController {
     			search.getRadius(), 
     			search.getNumber());
 		
-		double maxScore = list.get(0).getScore();
-	    model.addAttribute("u", list);
-	    model.addAttribute("max_score", maxScore);
-		
-		return "endindex";
+		if (list.size() > 0) {
+			double maxScore = list.get(0).getScore();
+
+		    model.addAttribute("u", list);
+		    model.addAttribute("max_score", maxScore);
+			
+			return "endindex";
+		} else {
+			return "noresults";
+		}
     }
     
     

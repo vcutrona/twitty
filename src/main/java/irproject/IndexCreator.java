@@ -22,6 +22,7 @@ import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.GeoPointField;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.NumericDocValuesField;
+import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
 import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
@@ -36,7 +37,6 @@ import entity.UserFields;
 public class IndexCreator {
 
 	private static final String[] boostVars = {"follower"};
-	private static final String[] notStored = {"profileImageURL", "coverImageURL", "numberOfTweets", "name", "description", "screenName"};
 	
 	private static IndexWriter createIndexWriter() {
 		
@@ -86,10 +86,9 @@ public class IndexCreator {
 						switch (type){
 						case "class java.lang.String":
 							try {
-								System.out.println("Attribute: " + field.getName() + " Value: " + (String)field.get(user) );
 								if (field.get(user) != null) {
-									doc.add(new TextField(field.getName(), (String)field.get(user), 
-											(Arrays.asList(notStored).contains(field.getName()) ? Field.Store.NO : Field.Store.YES)));
+									System.out.println("String attribute: " + field.getName() + " Value: " + (String)field.get(user) );
+									doc.add(new TextField(field.getName(), (String)field.get(user), Field.Store.YES));
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -99,8 +98,8 @@ public class IndexCreator {
 							break;
 						case "class entity.Locator":
 							try {
-								System.out.println("Attribute: " + field.getName() + " Value (latitude): " + ((Locator)field.get(user)).getLatitude() );
 								if (field.get(user) != null) {
+									System.out.println("Locator attribute: " + field.getName() + " Value (latitude): " + ((Locator)field.get(user)).getLatitude() );
 									Locator lc = (Locator) field.get(user);
 									doc.add(new GeoPointField("geolocation", lc.getLongitude(), lc.getLatitude(), Field.Store.YES));
 									doc.add(new TextField("city", lc.getLocality(), Field.Store.YES));
@@ -115,13 +114,13 @@ public class IndexCreator {
 							break;	
 						case "int":
 							try {
-								System.out.println("Attribute: " + field.getName() + " Value: " + (int)field.get(user) );
+								System.out.println("Int attribute: " + field.getName() + " Value: " + (int)field.get(user) );
 								if (Arrays.asList(boostVars).contains(field.getName())) {
 									System.out.println("Faccio boost");
 									doc.add(new NumericDocValuesField(field.getName(), (int)field.get(user)));
+									doc.add(new StoredField(field.getName(), (int)field.get(user))); //also store info
 								} else {
-									doc.add(new IntField(field.getName(), (int)field.get(user), 
-											(Arrays.asList(notStored).contains(field.getName()) ? Field.Store.NO : Field.Store.YES)));
+									doc.add(new IntField(field.getName(), (int)field.get(user), Field.Store.YES));
 								}
 							} catch (IllegalArgumentException e) {
 								e.printStackTrace();
@@ -131,9 +130,9 @@ public class IndexCreator {
 							break;
 						case "java.util.ArrayList<java.lang.String>":
 							try {
-								System.out.println("Attribute: " + field.getName() + " Value: " + (ArrayList<String>)field.get(user) );
 								ArrayList<String> strings = (ArrayList<String>) field.get(user);
 								if (strings != null) {
+									System.out.println("List attribute: " + field.getName() + " Value: " + (ArrayList<String>)field.get(user) );
 									for (String string: strings){
 										doc.add(new TextField(field.getName(), string, Field.Store.YES));
 									}
@@ -171,8 +170,8 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-	//TODO cancellare
-	public static void test(String[] args) throws IllegalArgumentException, IllegalAccessException {
+
+	public static void xmain(String[] args) throws IllegalArgumentException, IllegalAccessException {
 				
 		UserFields user = new UserFields();
 		user.gender = "male";
@@ -197,7 +196,7 @@ public class IndexCreator {
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		uf.add(user);
 		uf.add(user2);
-		//create(uf);
+		create(uf);
 		
 	}
 
