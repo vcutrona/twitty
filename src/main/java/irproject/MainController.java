@@ -3,7 +3,6 @@ package irproject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.stereotype.Controller;
@@ -11,18 +10,14 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+
 
 import entity.Search;
 import entity.UserFields;
 import entity.UserModel;
 import extractor.UserClassification;
 import twitter.TweetExtractor;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.User;
-import twitter4j.conf.ConfigurationBuilder;
 
 @Controller//@RestController
 public class MainController {
@@ -38,7 +33,6 @@ public class MainController {
 			UserClassification cinni = new UserClassification();
 			ArrayList<UserFields> uf = cinni.buildUserFieldList(users);
 			System.out.println("class");
-			//Users u = new Users();
 			IndexCreator.create(uf);
 			System.out.println("index created");
 
@@ -50,23 +44,18 @@ public class MainController {
 				model.addAttribute("u", u.subList(0, 5));
 			else
 				model.addAttribute("u", u);
-			return "endindex";
+			return "index"; //TODO
     	} catch(Exception e) {
     		System.out.println(e.getMessage());
     		System.out.println(e.getStackTrace());
 	    	return "error";
 	    }
     }
-    
-    @RequestMapping("/userdemo")
-    public String greeting() {
-        return "user";
-    }
-    
+        
     @RequestMapping(value="/search", method=RequestMethod.GET)
-    public String greetingForm(Model model) {
+    public String searchForm(Model model) {
         model.addAttribute("search", new Search());
-        return "greeting";
+        return "search";
     }
     @RequestMapping(value="/search", method=RequestMethod.POST)
     public String search(@ModelAttribute Search search,
@@ -94,7 +83,7 @@ public class MainController {
 		    model.addAttribute("u", list);
 		    model.addAttribute("max_score", maxScore);
 			
-			return "endindex";
+			return "showresults";
 		} else {
 			return "noresults";
 		}
@@ -105,61 +94,11 @@ public class MainController {
     public String index(Model model) {
         return "index";
     }
-    
-    @RequestMapping(value="/user")
-    public String showUser(@RequestParam(value="screen_name") String screenName, Model model) {
-    	ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true).setOAuthConsumerKey("2PexuEeruTahis27ZG3QxrEYh")
-				.setOAuthConsumerSecret("dfxizJjS5w9FqYDGQYgKI42DKXsw1wAcnIQTJU616pBIxrXKJh")
-				.setOAuthAccessToken("2332157006-BXKX6flDvtsaGCD4NBj8IzL5xl8DUyaL952aow2")
-				.setOAuthAccessTokenSecret("6ErzotI2jxbVYeeIbstUuQBp3FRvXwy25yKwbZTM9XQhy");
-		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
-		User user = null;
-		try {
-			user = twitter.showUser(screenName);
-		} catch (TwitterException e) {
-			e.printStackTrace();
-		}
-		
-		if(user==null) {
-			return "error";
-		}
-		
-		int friends = user.getFriendsCount();
-		
-		
-        return "show_user";
-    }
-    
-    @RequestMapping(value = "/demo")
-    public String getdata(Model model) throws TwitterException {
-
-    	ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true).setOAuthConsumerKey("2PexuEeruTahis27ZG3QxrEYh")
-				.setOAuthConsumerSecret("dfxizJjS5w9FqYDGQYgKI42DKXsw1wAcnIQTJU616pBIxrXKJh")
-				.setOAuthAccessToken("2332157006-BXKX6flDvtsaGCD4NBj8IzL5xl8DUyaL952aow2")
-				.setOAuthAccessTokenSecret("6ErzotI2jxbVYeeIbstUuQBp3FRvXwy25yKwbZTM9XQhy");
-		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
+        
+    @RequestMapping(value = "/user", method=RequestMethod.POST)
+    public String getdata(@ModelAttribute UserModel user, Model model) {
+    	System.out.println(user.screenName);
     	
-				
-	    ArrayList<UserFields> list = new ArrayList<UserFields>();
-	    UserFields a = new UserFields();
-	    UserModel b = new UserModel();
-
-	    a.screenName = "fb_vinid";
-		User user = twitter.showUser(a.screenName);
-		a.profileImageURL = user.getOriginalProfileImageURL();
-		a.coverImageURL = (user.getProfileBannerURL() != null ? user.getProfileBannerURL() : user.getProfileBackgroundImageURL());
-		a.follower = user.getFollowersCount();
-		a.description = user.getDescription();
-	    a.numberOfTweets = user.getStatusesCount();
-	    a.name = user.getName();
-		list.add(a);
-		list.add(a);
-		list.add(a);
-		
-	    model.addAttribute("u", list);
-	
-		return "endindex";
+		return "user";
     }
 }

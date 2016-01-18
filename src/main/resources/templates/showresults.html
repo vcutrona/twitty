@@ -285,8 +285,7 @@
 	                    <a class="btn btn-primary btn-twitter btn-sm" th:href="'https://twitter.com/' + ${user.screenName}">
 	                        <i class="fa fa-twitter"></i>
 	                    </a>
-	                    
-	                    <a class="btn btn-warning btn-sm" rel="publisher" href="https://plus.google.com/shahnuralam">
+	                    <a class="btn btn-warning btn-sm" rel="publisher" href="/user" th:object="${user}">
 	                        <i class="fa fa-plus"></i>
 	                    </a>
 	                </div>
