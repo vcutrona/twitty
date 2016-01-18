@@ -130,7 +130,7 @@ public class SearchHelper {
 		
 		//query sulla geolocalizzazione
 		if (radius == 0)
-			radius = 0.00001;
+			radius = 1;
 		GeoPointDistanceQuery queryGeolocation = new GeoPointDistanceQuery("geolocation", longitude, latitude, radius);
 		booleanQuery.add(queryGeolocation, this.getBoolClause("geolocation"));
 

@@ -58,24 +58,9 @@ public class MainController {
 	    }
     }
     
-    /*
-    @RequestMapping("/greeting")
-    public String greeting(@RequestParam(value="name", required=false, defaultValue="World") String name, Model model) {
-        model.addAttribute("name", name);
-        return "greeting";
-    }
-    */
-
-    /*
-    @RequestMapping(value="/greeting", method=RequestMethod.POST)
-    public String greetingSubmit(@ModelAttribute Greeting greeting, Model model) {
-        model.addAttribute("greeting", greeting);
-        return "result";
-    }
-    */
-    @RequestMapping("/map")
+    @RequestMapping("/userdemo")
     public String greeting() {
-        return "map";
+        return "user";
     }
     
     @RequestMapping(value="/search", method=RequestMethod.GET)
