@@ -277,7 +277,7 @@
 	                    <div class="title">
 	                        <a target="_blank" th:text="${user.name} + ' @' + ${user.screenName}" th:href="'https://twitter.com/' + ${user.screenName}">Script Eden</a>
 	                    </div>
-	                    <div class="desc" th:text="${'We think you will be friends! ' +  T(Math).floor((user.score / max_score)*100) + ' sure!'}">Passionate designer</div>
+	                    <!-- <div class="desc" th:text="${'We think you will be friends! ' +  T(Math).floor((user.score / max_score)*100) + ' sure!'}">Passionate designer</div> -->
 	                    <div class="desc" th:text="${user.follower} + ' follower'">Curious developer</div>
 	                    <div class="desc" th:text="${user.numberOfTweets} + ' tweet'">Tech geek</div>
 	                </div>

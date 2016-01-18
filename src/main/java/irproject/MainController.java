@@ -5,20 +5,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 
-import org.apache.lucene.document.Document;
 import org.apache.lucene.queryparser.classic.ParseException;
-import org.apache.lucene.search.ScoreDoc;
-import org.apache.lucene.search.TopDocs;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.servlet.ModelAndView;
 
-import entity.Greeting;
 import entity.Search;
 import entity.UserFields;
 import entity.UserModel;
@@ -38,16 +32,24 @@ public class MainController {
     public String build(Model model) {
     	try {
 	    	TweetExtractor stream = new TweetExtractor();
-			HashSet<User> users = stream.execute();
+	    	System.out.println("stream");
+			ArrayList<UserFields> users = stream.execute();
+			System.out.println("stream execute");
 			UserClassification cinni = new UserClassification();
 			ArrayList<UserFields> uf = cinni.buildUserFieldList(users);
+			System.out.println("class");
 			//Users u = new Users();
 			IndexCreator.create(uf);
-			//u.users = list;
-			if (uf.size() > 5)
-				model.addAttribute("u", uf.subList(0, 5));
+			System.out.println("index created");
+
+			ArrayList<UserFields> u = new ArrayList<UserFields>();
+			
+			u.addAll(uf);
+			
+			if (u.size() > 5)
+				model.addAttribute("u", u.subList(0, 5));
 			else
-				model.addAttribute("u", uf);
+				model.addAttribute("u", u);
 			return "endindex";
     	} catch(Exception e) {
     		System.out.println(e.getMessage());

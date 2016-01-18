@@ -1,52 +1,129 @@
 package twitter;
 
+import twitter4j.HashtagEntity;
+import twitter4j.Paging;
 import twitter4j.StallWarning;
 import twitter4j.Status;
 import twitter4j.StatusDeletionNotice;
 import twitter4j.StatusListener;
+import twitter4j.Twitter;
 import twitter4j.TwitterException;
+import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
 import twitter4j.TwitterStreamFactory;
 import twitter4j.User;
+import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 import util.GoogleMapsLocator;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
+import java.util.List;
+
+import entity.Locator;
+import entity.UserFields;
 
 public class TweetExtractor {
 
+	private final int TOTALUSER = 5;
+	
 	private final Object lock = new Object();
-	private final GoogleMapsLocator gml = new GoogleMapsLocator();
-	private final int totalUser = 1; 
-	public HashSet<User> execute() throws TwitterException {
-
-		final HashSet<User> users = new HashSet<User>();
-
-		ConfigurationBuilder cb = new ConfigurationBuilder();
+	private static GoogleMapsLocator gml;
+	private static ConfigurationBuilder cb;
+	private static Twitter twitter;
+	private static Configuration c;
+	
+	public TweetExtractor(){
+		gml = new GoogleMapsLocator();
+		cb = new ConfigurationBuilder();
 		cb.setDebugEnabled(true).setOAuthConsumerKey("CONSUMER_KEY")
 				.setOAuthConsumerSecret("CONSUMER_KEY_SECRET")
 				.setOAuthAccessToken("ACCESS_TOKEN")
 				.setOAuthAccessTokenSecret("ACCESS_TOKEN_SECRET");
+		c = cb.build();
+		twitter = new TwitterFactory(c).getInstance();
+	}
+	
+	private static List<Status>  getStatuses(String screenName){
+		Paging paging = new Paging(1, 200);
+		List<Status> statuses = null;
+		try {
+			statuses = twitter.getUserTimeline(screenName, paging);
+		} catch (TwitterException e) {
+			e.printStackTrace();
+		}
+		return statuses;
+	}
+	
+	private String getUserHashtag(List<Status> statuses) throws TwitterException {
 
-		TwitterStream twitterStream = new TwitterStreamFactory(cb.build()).getInstance();
+		HashSet <HashtagEntity> hashtags = new HashSet<HashtagEntity>();
+		for (Status status : statuses) {
+			
+			hashtags.addAll(Arrays.asList(status.getHashtagEntities()));
+		}
+		String hashy = "";
+        for (HashtagEntity hashtagEntity : hashtags) {
+        	hashy += hashtagEntity.getText() + " ";
+		}
+		return hashy;
+	}
+	
+	public ArrayList<UserFields> execute() throws TwitterException {
+
+		final HashSet<UserFields> users = new HashSet<UserFields>();
+
+		TwitterStream twitterStream = new TwitterStreamFactory(c).getInstance();
 
 		StatusListener listener = new StatusListener() {
 
 			public void onStatus(Status status) {
+				// Prendo l'utente
 				User user = status.getUser();
-
-				// Se abbiamo trovato un utente lo salviamo nell'hashset
+				// Creo lo UserFields
+				UserFields uf = new UserFields();
+				
+				// Se abbiamo trovato un utente proviamo a salvarlo nell'hashset
 				System.out.println("Questo utente: " + user.getLocation() + " " + user.getLang() + " " + user.getStatusesCount());
-				String location = user.getLocation();
-				//location non nulla ed esiste in google maps
-				if (location != null && !location.isEmpty() && (gml.getLocationData(location) != null) && (user.getStatusesCount() > 200) && (user.getLang().equals("en"))) {
-					users.add(user);
+				
+				// Verifica della location
+				String location = user.getLocation(); //location di Twitter
+				Locator l = null;
+				if (location != null && !location.isEmpty())
+					l = gml.getLocationData(location); // location di Google
+				
+				// Riempio UserFields
+				if (l != null && (user.getStatusesCount() > 200) && (user.getLang().equals("en"))) {
+					
+					// Username
+					String screenName = user.getScreenName();
+					
+					// Recupero i 200 stati e riempio Tweets
+					List<Status> statuses = getStatuses(screenName);
+					ArrayList <String> tweets = new ArrayList<String>();
+					for (Status s : statuses) {
+						tweets.add(s.getText());
+					}
+					
+					//Setto tutti i parametri
+					uf.screenName = screenName;
+					uf.profileImageURL = user.getOriginalProfileImageURL();
+					uf.coverImageURL = (user.getProfileBannerURL() != null ? user.getProfileBannerURL() : user.getProfileBackgroundImageURL());
+					uf.follower = user.getFollowersCount();
+					uf.description = user.getDescription();
+					uf.numberOfTweets = user.getStatusesCount();
+					uf.name = user.getName();
+					uf.tweet = tweets;
+					uf.locator = l;
+					
+					users.add(uf);
 					System.out.println("Adesso abbiamo " + users.size() + " utenti");
-					// System.out.println(user.getName());
 				}
-				if (users.size() >= totalUser) {
+
+				if (users.size() >= TOTALUSER) {
 					synchronized (lock) {
-						lock.notify();
+						lock.notifyAll();
 					}
 					System.out.println("unlocked");
 				}
@@ -82,11 +159,13 @@ public class TweetExtractor {
 				lock.wait();
 			}
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		System.out.println("returning users");
 		twitterStream.shutdown();
-		return users;
+		
+		ArrayList<UserFields> auf = new ArrayList<UserFields>();
+		auf.addAll(users);
+		return auf;
 	}
 }

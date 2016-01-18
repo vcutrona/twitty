@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
@@ -82,7 +83,6 @@ public class IndexCreator {
 					if (field.getModifiers() == 1) {
 						String type = field.getGenericType().toString();
 						
-
 						switch (type){
 						case "class java.lang.String":
 							try {
@@ -171,6 +171,7 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
+	//TODO cancellare
 	public static void test(String[] args) throws IllegalArgumentException, IllegalAccessException {
 				
 		UserFields user = new UserFields();
@@ -193,11 +194,10 @@ public class IndexCreator {
 		tweet.addAll(Arrays.asList(asd2));
 		user2.tweet = tweet;
 		
-		
 		ArrayList<UserFields> uf = new ArrayList<UserFields>();
 		uf.add(user);
 		uf.add(user2);
-		create(uf);
+		//create(uf);
 		
 	}
 

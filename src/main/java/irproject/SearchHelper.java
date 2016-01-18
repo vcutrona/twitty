@@ -65,15 +65,9 @@ public class SearchHelper {
 		TopDocs topDocs = this.performSearch(tweet, gender, age, longitude, latitude, d, 100);
 		System.out.println("sto cercando");
 		ScoreDoc[] hits = topDocs.scoreDocs;
-    	ConfigurationBuilder cb = new ConfigurationBuilder();
-		cb.setDebugEnabled(true).setOAuthConsumerKey("2PexuEeruTahis27ZG3QxrEYh")
-				.setOAuthConsumerSecret("dfxizJjS5w9FqYDGQYgKI42DKXsw1wAcnIQTJU616pBIxrXKJh")
-				.setOAuthAccessToken("2332157006-BXKX6flDvtsaGCD4NBj8IzL5xl8DUyaL952aow2")
-				.setOAuthAccessTokenSecret("6ErzotI2jxbVYeeIbstUuQBp3FRvXwy25yKwbZTM9XQhy");
-		Twitter twitter = new TwitterFactory(cb.build()).getInstance();
 		
 		// retrieve each matching document from the ScoreDoc array
-		ArrayList<UserModel> uml = new ArrayList<>();
+		ArrayList<UserModel> uml = new ArrayList<UserModel>();
 		for (int i = 0; i < hits.length; i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			String name = doc.get("screenName");
@@ -81,16 +75,12 @@ public class SearchHelper {
 		    
 			UserModel um = new UserModel();
 			um.screenName = name;
-			
-			//user from twitter
-			User user = twitter.showUser(um.screenName);
-
-			um.profileImageURL = user.getOriginalProfileImageURL();
-			um.coverImageURL = (user.getProfileBannerURL() != null ? user.getProfileBannerURL() : user.getProfileBackgroundImageURL());
-			um.follower = user.getFollowersCount();
-			um.description = user.getDescription();
-			um.numberOfTweets = user.getStatusesCount();
-			um.name = user.getName();
+			um.profileImageURL = doc.get("profileImageURL");
+			um.coverImageURL = doc.get("coverImageURL");
+			um.follower = Integer.valueOf(doc.get("follower"));
+			um.description = doc.get("description");
+			um.numberOfTweets = Integer.valueOf(doc.get("numberOfTweets"));
+			um.name = doc.get("name");
 			um.setScore(hits[i].score);
 			uml.add(um);
 		}
