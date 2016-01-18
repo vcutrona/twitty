@@ -39,7 +39,7 @@
 	<div class="container">
 
 		<div class="row">
-			<div class="col-md-10 col-lg-10 col-md-offset-1 col-lg-offset-1 text-center">
+			<div class="col-md-6">
 
 				<!-- Site Title, your name, HELLO msg, etc. -->
 				<h1 class="title">Twitter friends</h1>
@@ -54,18 +54,35 @@
                         <label>Gender: </label>
                         <input type="text" class="form-control" name="myquery" th:field="*{gender}" />
                         <label>Latitude: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{latitude}" />
+                        <input type="text" id="latitude" class="form-control" name="myquery" th:field="*{latitude}" />
                         <label>Longitude: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{longitude}" />
+                        <input type="text" id="longitude" class="form-control" name="myquery" th:field="*{longitude}" />
                         <label>Radius: </label>
                         <input type="text" class="form-control" name="myquery" th:field="*{radius}" />
                         <label>Number: </label>
                         <input type="text" class="form-control" name="myquery" th:field="*{number}" />
+                        <label>City: </label>
+				        <input id="city" class="form-control tip" type="text" 
+				         value=""  />
+				        <label>Country: </label>
+				        <input id="country" class="form-control tip" type="text" 
+				        value=""  />
                     </div>
                     
                     <button type="submit" class="btn btn-default">Submit</button> <button type="reset" class="btn btn-default">Reset</button>
 			    </form>
 			</div> <!-- /col -->
+			<div class="col-md-6">
+				<h3> Geo coordinates are too difficult? Use our search tool to find them! Just write the address and define a radius</h3>
+					   <label>Address to search: </label>
+				       <input id="rawAddress" class="form-control tip" type="text" placeholder="Type the address"
+				       title="Enter the address or move the marker" value=""/>
+				       <label>Address found: </label>
+				       <input id="addressClean" class="form-control tip" type="text" 
+				       title="Enter the address or move the marker" value="" readonly="readonly" />
+				       <hr/>
+				<div id="map-canvas" style="height:287px"></div>
+			</div> <!-- second /col -->
 		</div> <!-- /row -->
 
 	</div>
@@ -98,6 +115,35 @@
 <script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
 <script src="js/modernizr.custom.72241.js"></script>
 <!-- Custom template scripts -->
-<script src="js/magister.js"></script>
+
+
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+
+    <script type="text/javascript">
+      // vars
+      var iconMarker = 'img/social-balloon-twitter-icon.png';
+      var mapCenter = new google.maps.LatLng(42.9508683, 12.701474899999994);
+
+      // fields
+      var rawAddressField = $('#rawAddress');
+      var nameField = $('#name');
+      var latField = $('#longitude');
+      var lngField = $('#latitude');
+      var addressField = $('#addressClean');
+      var cityField = $('#city');
+      var countryField = $('#country');
+
+      $(function () {
+        initialize();
+
+            var center = map.getCenter();
+            google.maps.event.trigger(map, "resize");
+            map.setCenter(center);
+
+      });
+
+    </script>
+<script type="text/javascript" src="js/map.js"></script>
+    
 </body>
 </html>

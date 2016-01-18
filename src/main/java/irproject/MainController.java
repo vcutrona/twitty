@@ -73,6 +73,11 @@ public class MainController {
         return "result";
     }
     */
+    @RequestMapping("/map")
+    public String greeting() {
+        return "map";
+    }
+    
     @RequestMapping(value="/search", method=RequestMethod.GET)
     public String greetingForm(Model model) {
         model.addAttribute("search", new Search());
