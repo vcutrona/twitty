@@ -62,20 +62,21 @@ public class MainController {
     		Model model) throws IOException, ParseException, TwitterException {
     	
 		HashMap<String, String> ht = new HashMap<String, String>();
-		ht.put("tweet", "OR");
-		ht.put("gender", "OR");
-		ht.put("age", "OR");
-		ht.put("geolocation", "OR");
-
+		ht.put("tweet", (search.isInterestDic() ? "AND" : "OR"));
+		ht.put("gender", (search.isGenderDic() ? "AND" : "OR"));
+		ht.put("age", (search.isAgeDic() ? "AND" : "OR"));
+		ht.put("geolocation", (search.isGeoDic() ? "AND" : "OR"));
+				
 		SearchHelper se = new SearchHelper(ht); 
     	ArrayList<UserModel> list = se.search(
-    			search.getInterest(), 
-    			search.getGender(), 
+    			search.getInterest().toLowerCase().trim(), 
+    			search.getGender().toLowerCase().trim(), 
     			(search.getAge() != null && !search.getAge().isEmpty() ? Integer.parseInt(search.getAge()) : 0),
     			(search.getLongitude() != null && !search.getLongitude().isEmpty() ? Double.parseDouble(search.getLongitude()) : 0),
     			(search.getLatitude() != null && !search.getLatitude().isEmpty() ? Double.parseDouble(search.getLatitude()) : 0),
     			(search.getRadius() != null && !search.getRadius().isEmpty() ? Integer.parseInt(search.getRadius()) : 0),
-    			(search.getNumber() != null && !search.getNumber().isEmpty() ? Integer.parseInt(search.getNumber()) : 0));
+    			(search.getNumber() != null && !search.getNumber().isEmpty() ? Integer.parseInt(search.getNumber()) : 0),
+    			(search.isBoost()));
     	
 		if (list.size() > 0) {
 			double maxScore = list.get(0).getScore();

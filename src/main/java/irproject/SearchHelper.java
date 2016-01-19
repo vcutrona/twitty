@@ -41,7 +41,7 @@ public class SearchHelper {
 
 	private static IndexSearcher searcher = null;
 	Map<String, String> dictionary;
-	private Highlighter tweetHighlighter;
+	private Highlighter tweetHighlighter = null;
 	private String[] uClassifyRanges = {"13-17", "18-25", "26-35", "36-50", "51-65", "65-100"};
 	private IndexReader indexReader;
 	/**
@@ -57,9 +57,9 @@ public class SearchHelper {
 		searcher = new IndexSearcher(indexReader);
 	}
 
-	public ArrayList<UserModel> search(String tweet,  String gender, int age, double longitude, double latitude, int d, int n) throws IOException, ParseException, TwitterException {
+	public ArrayList<UserModel> search(String tweet,  String gender, int age, double longitude, double latitude, int d, int n, boolean boost) throws IOException, ParseException, TwitterException {
 		
-		TopDocs topDocs = this.performSearch(tweet, gender, age, longitude, latitude, d, 100);
+		TopDocs topDocs = this.performSearch(tweet, gender, age, longitude, latitude, d, n, boost);
 		System.out.println("sto cercando");
 		ScoreDoc[] hits = topDocs.scoreDocs;
 				
@@ -82,29 +82,30 @@ public class SearchHelper {
 			uml.add(um);
 			System.out.println(um.name);
 			
-			IndexableField[] tweets = doc.getFields("tweet");
-			for (IndexableField field : tweets) {
-                @SuppressWarnings("resource")
-				TokenStream tokenStream = new TweetAnalyzer().tokenStream("", field.stringValue());
-                TextFragment[] fragments = null;
-				try {
-					fragments = this.tweetHighlighter.getBestTextFragments(tokenStream, field.stringValue(), false, 5);
-				} catch (InvalidTokenOffsetsException e) {
-					e.printStackTrace();
-				}
-
-                for (TextFragment t : fragments) {
-                	if (t.getScore() > 0.0)
-                		um.getFragments().add(t.toString());
-                }
-            }
-
+			if (tweetHighlighter != null) {
+				IndexableField[] tweets = doc.getFields("tweet");
+				for (IndexableField field : tweets) {
+	                @SuppressWarnings("resource")
+					TokenStream tokenStream = new TweetAnalyzer().tokenStream("", field.stringValue());
+	                TextFragment[] fragments = null;
+					try {
+						fragments = this.tweetHighlighter.getBestTextFragments(tokenStream, field.stringValue(), false, 5);
+					} catch (InvalidTokenOffsetsException e) {
+						e.printStackTrace();
+					}
+	
+	                for (TextFragment t : fragments) {
+	                	if (t.getScore() > 0.0)
+	                		um.getFragments().add(t.toString());
+	                }
+	            }
+			}
 
 		}
 		return uml;
 	}
 
-	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, double radius, int n)
+	public TopDocs performSearch(String tweet,  String gender, int age, double longitude, double latitude, double radius, int n, boolean boost)
 			throws IOException, ParseException {
 		
 		BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
@@ -127,7 +128,7 @@ public class SearchHelper {
 		}
 		
 		//Query sul genere
-		if (gender != null && !gender.isEmpty()){
+		if (gender != null && (!gender.equals("male") || !gender.equals("female"))){
 			Query queryGender = new TermQuery(new Term("gender", gender));
 			booleanQuery.add(queryGender, this.getBoolClause("gender"));
 		}
@@ -148,18 +149,27 @@ public class SearchHelper {
 			booleanQuery.add(queryAge, this.getBoolClause("age"));
 		}
 		
-		//TODO gestire
 		//query sulla geolocalizzazione
-		if (radius == 0)
-			radius = 1;
-		GeoPointDistanceQuery queryGeolocation = new GeoPointDistanceQuery("geolocation", longitude, latitude, radius);
-		booleanQuery.add(queryGeolocation, this.getBoolClause("geolocation"));
-
+		if (longitude != 0 && latitude != 0) {
+			if (radius == 0)
+				radius = 1;
+			GeoPointDistanceQuery queryGeolocation = new GeoPointDistanceQuery("geolocation", longitude, latitude, radius);
+			booleanQuery.add(queryGeolocation, this.getBoolClause("geolocation"));
+		}
 		
+		//Controllo numero risultati
+		if (n == 0)
+			n = Integer.MAX_VALUE; //TODO ok?
+
 		//Query sui follower (boost)
-		Query q = new CustomScoreQuery(booleanQuery.build(), new FunctionQuery(new LongFieldSource("follower")));
+		if (boost) {
+			Query q = new CustomScoreQuery(booleanQuery.build(), new FunctionQuery(new LongFieldSource("follower")));
+			return searcher.search(q, n);
+		} else {
+			return searcher.search(booleanQuery.build(), n);
+		}
 		//searcher.setSimilarity(new LMDirichletSimilarity()); 
-		return searcher.search(q, n);
+		
 	}
 
 	public Document getDocument(int docId) throws IOException {
@@ -178,7 +188,7 @@ public class SearchHelper {
 		ht.put("geolocation", "OR");
 
 		SearchHelper se = new SearchHelper(ht); 
-    	ArrayList<UserModel> list = se.search("", "male", 0, 0, 0, 1, 0);
+    	ArrayList<UserModel> list = se.search("", "male", 0, 0, 0, 1, 0, true);
 		
     	for (UserModel u : list) {
     		System.out.println(u.screenName);

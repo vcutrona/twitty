@@ -2,12 +2,17 @@ package entity;
 
 public class Search {
 	private String interest;
+	private boolean interestDic;
 	private String number;
 	private String gender;
+	private boolean genderDic;
 	private String age;
+	private boolean ageDic;
+	private boolean geoDic;
 	private String latitude;
 	private String longitude;
 	private String radius;
+	private boolean boost;
 	
 	public String getInterest() {
 		return interest;
@@ -50,6 +55,36 @@ public class Search {
 	}
 	public void setRadius(String radius) {
 		this.radius = radius;
+	}
+	public boolean isBoost() {
+		return boost;
+	}
+	public void setBoost(boolean boost) {
+		this.boost = boost;
+	}
+	public boolean isInterestDic() {
+		return interestDic;
+	}
+	public void setInterestDic(boolean interestDic) {
+		this.interestDic = interestDic;
+	}
+	public boolean isGenderDic() {
+		return genderDic;
+	}
+	public void setGenderDic(boolean genderDic) {
+		this.genderDic = genderDic;
+	}
+	public boolean isAgeDic() {
+		return ageDic;
+	}
+	public void setAgeDic(boolean ageDic) {
+		this.ageDic = ageDic;
+	}
+	public boolean isGeoDic() {
+		return geoDic;
+	}
+	public void setGeoDic(boolean geoDic) {
+		this.geoDic = geoDic;
 	}
 	
 }
