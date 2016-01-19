@@ -2,7 +2,9 @@ package util;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.textrazor.AnalysisException;
 import com.textrazor.NetworkException;
@@ -10,17 +12,14 @@ import com.textrazor.TextRazor;
 import com.textrazor.annotations.AnalyzedText;
 import com.textrazor.annotations.Entity;
 import com.textrazor.annotations.Response;
-import com.textrazor.annotations.Topic;
 
 import entity.CustomEntity;
-import entity.CustomTopic;
 
 public class TextRazorUtil {
 	
 	TextRazor client = new TextRazor("YOUR_KEY");
 	
 	public TextRazorUtil(){
-		client.addExtractor("topics");
 		client.addExtractor("entities");
 	}
 	
@@ -35,7 +34,7 @@ public class TextRazorUtil {
 		return null;
 	}
 	
-	public List<CustomEntity> getEntities(String input) {
+	public ArrayList<CustomEntity> getEntities(String input) {
 		Response response = this.analyze(input);
 		if (response == null)
 			return null;
@@ -44,34 +43,34 @@ public class TextRazorUtil {
 		ArrayList<CustomEntity> returnEntities = new ArrayList<CustomEntity>();
 		for (Entity e : entities) {
 			CustomEntity me = new CustomEntity(e.getConfidenceScore(), e.getMatchedText());
-			returnEntities.add(me);
+			me.setMatchedText(me.getMatchedText().replaceAll("((http(s?))+:\\/\\/)?[\\w|-]+(\\.([\\w|-]+))+(([|\\/|\\?|&|=|\\.|\\!|\\#|\\+]*[\\w|-]+)*(\\/|\\;)*)*", ""));
+			if (!me.getMatchedText().trim().isEmpty() && me.getConfidenceScore() > 2)
+				returnEntities.add(me);
 		}
+		
+		Set<CustomEntity> noDup = new HashSet<CustomEntity>();
+		noDup.addAll(returnEntities);
+		returnEntities.clear();
+		returnEntities.addAll(noDup);
 		Collections.sort(returnEntities);
+		System.out.println(returnEntities.size());
+		System.out.println(noDup.size());
 		return returnEntities;
 	}
 	
 	public List<CustomEntity> getEntities(String input, int n) {
-		List<CustomEntity> returnEntities = this.getEntities(input);
-		return returnEntities.subList(0, n);
-	}
-		
-	public List<CustomTopic> getTopics(String input) {
-		Response response = this.analyze(input);
-		if (response == null)
-			return null;
-		
-		List<Topic> topics = response.getTopics();
-		ArrayList<CustomTopic> returnTopics = new ArrayList<CustomTopic>();
-		for (Topic t : topics) {
-			CustomTopic mt = new CustomTopic(t.getScore(), t.getLabel());
-			returnTopics.add(mt);
-		}
-		Collections.sort(returnTopics);
-		return returnTopics;
+		ArrayList<CustomEntity> ce = this.getEntities(input);
+		List<CustomEntity> returnEntities = new ArrayList<CustomEntity>();
+		returnEntities.addAll(ce);
+		if (returnEntities.size() > n)
+			return returnEntities.subList(0, n);
+		return returnEntities;
 	}
 	
-	public List<CustomTopic> getTopics(String input, int n) {
-		List<CustomTopic> returnTopics = this.getTopics(input);
-		return returnTopics.subList(0, n);
+	public static void xmain(String[] args) {
+		TextRazorUtil tru = new TextRazorUtil();
+		for(CustomEntity ce : tru.getEntities("I use @Trello for [planning spelunking trips] http://bit.ly/1NF1j2l  #Trello10m", 5)){
+			System.out.println(ce);
+		}
 	}
 }
