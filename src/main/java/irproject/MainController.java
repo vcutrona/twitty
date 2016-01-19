@@ -71,12 +71,12 @@ public class MainController {
     	ArrayList<UserModel> list = se.search(
     			search.getInterest(), 
     			search.getGender(), 
-    			search.getAge(),
-    			search.getLongitude(), 
-    			search.getLatitude(), 
-    			search.getRadius(), 
-    			search.getNumber());
-		
+    			(search.getAge() != null && !search.getAge().isEmpty() ? Integer.parseInt(search.getAge()) : 0),
+    			(search.getLongitude() != null && !search.getLongitude().isEmpty() ? Double.parseDouble(search.getLongitude()) : 0),
+    			(search.getLatitude() != null && !search.getLatitude().isEmpty() ? Double.parseDouble(search.getLatitude()) : 0),
+    			(search.getRadius() != null && !search.getRadius().isEmpty() ? Integer.parseInt(search.getRadius()) : 0),
+    			(search.getNumber() != null && !search.getNumber().isEmpty() ? Integer.parseInt(search.getNumber()) : 0));
+    	
 		if (list.size() > 0) {
 			double maxScore = list.get(0).getScore();
 

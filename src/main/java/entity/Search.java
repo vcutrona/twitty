@@ -2,22 +2,23 @@ package entity;
 
 public class Search {
 	private String interest;
-	private int number;
+	private String number;
 	private String gender;
-	private int age;
-	private double latitude;
-	private double longitude;
-	private int radius;
+	private String age;
+	private String latitude;
+	private String longitude;
+	private String radius;
+	
 	public String getInterest() {
 		return interest;
 	}
 	public void setInterest(String interest) {
 		this.interest = interest;
 	}
-	public int getNumber() {
+	public String getNumber() {
 		return number;
 	}
-	public void setNumber(int number) {
+	public void setNumber(String number) {
 		this.number = number;
 	}
 	public String getGender() {
@@ -26,28 +27,29 @@ public class Search {
 	public void setGender(String gender) {
 		this.gender = gender;
 	}
-	public int getAge() {
+	public String getAge() {
 		return age;
 	}
-	public void setAge(int age) {
+	public void setAge(String age) {
 		this.age = age;
 	}
-	public double getLatitude() {
+	public String getLatitude() {
 		return latitude;
 	}
-	public void setLatitude(double latitude) {
+	public void setLatitude(String latitude) {
 		this.latitude = latitude;
 	}
-	public double getLongitude() {
+	public String getLongitude() {
 		return longitude;
 	}
-	public void setLongitude(double longitude) {
+	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
-	public int getRadius() {
+	public String getRadius() {
 		return radius;
 	}
-	public void setRadius(int radius) {
+	public void setRadius(String radius) {
 		this.radius = radius;
 	}
+	
 }
