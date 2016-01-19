@@ -121,50 +121,49 @@
 		                    </div>					    
 					</div> <!-- /col -->
 					<div class="col-md-6">
-						<h3> Geo coordinates are too difficult? Use our search tool to find them! Just write the address and define a radius</h3>
-						       	<div class="row">
-			                		<div class="col-md-3">
-		              					<label>Address found: </label>
-			                        </div>
-			                        <div class="col-md-9"> 
-		                        		<input id="addressClean" class="form-control tip" type="text" 
-						       			title="Enter the address or move the marker" value="" readonly="readonly" />
-			                        </div>
-			                    </div>
-			                    <div class="row">
-			                		<div class="col-md-3">
-		                        		<label>City: </label>
-			                        </div>
-			                        <div class="col-md-9"> 
-		                        		 <input id="city" class="form-control tip" type="text" value="" readonly="readonly" />
-			                        </div>
-			                    </div>
-		                        <div class="row">
-			                		<div class="col-md-3">
-		                        		<label>Country: </label>
-			                        </div>
-			                        <div class="col-md-9"> 
-		                        		 <input id="country" class="form-control tip" type="text" value="" readonly="readonly" />
-			                        </div>
-			                    </div>
-						       	<div class="row">
-			                		<div class="col-md-3">
-		              					<label>Latitude: </label>
-			                        </div>
-			                        <div class="col-md-9"> 
-		                        		<input type="text" id="latitude" class="form-control" name="myquery" th:field="*{latitude}" readonly="readonly" />
-			                        </div>
-			                    </div>
-			                    <div class="row">
-			                		<div class="col-md-3">
-		                        		<label>Longitude: </label>
-			                        </div>
-			                        <div class="col-md-9"> 
-		                        		<input type="text" id="longitude" class="form-control" name="myquery" th:field="*{longitude}" readonly="readonly" />
-			                        </div>
-			                    </div>
-						       <hr/>
-						<div id="map-canvas" style="height:287px"></div>
+				       	<div class="row">
+	                		<div class="col-md-3">
+              					<label>Address found: </label>
+	                        </div>
+	                        <div class="col-md-9"> 
+                        		<input id="addressClean" class="form-control tip" type="text" 
+				       			title="Enter the address or move the marker" value="" readonly="readonly" />
+	                        </div>
+	                    </div>
+	                    <div class="row">
+	                		<div class="col-md-3">
+                        		<label>City: </label>
+	                        </div>
+	                        <div class="col-md-9"> 
+                        		 <input id="city" class="form-control tip" type="text" value="" readonly="readonly" />
+	                        </div>
+	                    </div>
+                        <div class="row">
+	                		<div class="col-md-3">
+                        		<label>Country: </label>
+	                        </div>
+	                        <div class="col-md-9"> 
+                        		 <input id="country" class="form-control tip" type="text" value="" readonly="readonly" />
+	                        </div>
+	                    </div>
+				       	<div class="row">
+	                		<div class="col-md-3">
+              					<label>Latitude: </label>
+	                        </div>
+	                        <div class="col-md-9"> 
+                        		<input type="text" id="latitude" class="form-control" name="myquery" th:field="*{latitude}" readonly="readonly" />
+	                        </div>
+	                    </div>
+	                    <div class="row">
+	                		<div class="col-md-3">
+                        		<label>Longitude: </label>
+	                        </div>
+	                        <div class="col-md-9"> 
+                        		<input type="text" id="longitude" class="form-control" name="myquery" th:field="*{longitude}" readonly="readonly" />
+	                        </div>
+	                    </div>
+				       <hr/>
+					   <div id="map-canvas" style="height:287px"></div>
 					</div> <!-- second /col -->
 					
 					<div align="center">
