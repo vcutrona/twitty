@@ -134,7 +134,7 @@ public class SearchHelper {
 		}
 		
 		//Query sull'età
-		if (age != 0) {
+		if (age > 0) {
 			String ageToSearch = "";
 			for (int i = 0; i < uClassifyRanges.length; ++i) {
 				String ageRange = uClassifyRanges[i];
@@ -151,14 +151,14 @@ public class SearchHelper {
 		
 		//query sulla geolocalizzazione
 		if (longitude != 0 && latitude != 0) {
-			if (radius == 0)
+			if (radius <= 0)
 				radius = 1;
 			GeoPointDistanceQuery queryGeolocation = new GeoPointDistanceQuery("geolocation", longitude, latitude, radius);
 			booleanQuery.add(queryGeolocation, this.getBoolClause("geolocation"));
 		}
 		
 		//Controllo numero risultati
-		if (n == 0)
+		if (n <= 0)
 			n = Integer.MAX_VALUE; //TODO ok?
 
 		//Query sui follower (boost)
