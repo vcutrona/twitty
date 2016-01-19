@@ -70,17 +70,17 @@ public class MainController {
     	TweetExtractor twe = new TweetExtractor();
     	TextRazorUtil tru = new TextRazorUtil();
     	List<Status> statuses = twe.getStatuses(search.getScreenName());
-    	String concatStatuses = "";
+    	    	
+    	String concSt = "";
     	for (Status s : statuses) {
-    		concatStatuses += " " + s;
-    	}
-    	ArrayList<CustomEntity> ces = tru.getEntities(concatStatuses);
-    	
-    	String concatEntities = "";
-    	for (CustomEntity ce : ces) {
-    		concatEntities += " " + ce.getMatchedText();
+    		concSt += " " + s.getText();
     	}
     	
+    	ArrayList<CustomEntity> ces = tru.getEntities(concSt);
+
+    	if (ces == null)
+    		return "noresults";
+    	    	
     	HashMap<String, String> ht = new HashMap<String, String>();
 		ht.put("tweet", "OR");
 		ht.put("gender", "OR");
@@ -90,12 +90,29 @@ public class MainController {
 		SearchHelper se;
 		try {
 			se = new SearchHelper(ht);
-			ArrayList<UserModel> list = se.search(concatEntities, "", 0,0,0,0,5,(false));
+			ArrayList<UserModel> listTmp = null;
+			ArrayList<UserModel> returnList = new ArrayList<UserModel>();
+			for (CustomEntity ce : ces) {
+				listTmp = se.search("\"" + ce.getMatchedText() + "\"", "", 0,0,0,0,5,(false));
+				for (UserModel u1 : listTmp) {
+					if (returnList.contains(u1)){
+						for (UserModel u2 : returnList) {
+							if (u1.getScreenName().equals(u2.getScreenName())) {
+								u2.fragments.addAll(u1.getFragments());
+								break;
+							}
+						}
+					} else {
+						returnList.addAll(listTmp);
+					}
+				}
+			}
+			//ArrayList<UserModel> list = se.search(concatEntities, "", 0,0,0,0,5,(false));
 	    	
-			if (list.size() > 0) {
-				double maxScore = list.get(0).getScore();
+			if (returnList.size() > 0) {
+				double maxScore = returnList.get(0).getScore();
 
-			    model.addAttribute("u", list);
+			    model.addAttribute("u", returnList);
 			    model.addAttribute("max_score", maxScore);
 				return "showresults";
 			} else {
