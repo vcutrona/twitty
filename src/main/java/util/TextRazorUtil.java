@@ -40,11 +40,15 @@ public class TextRazorUtil {
 			return null;
 		
 		List<Entity> entities = response.getEntities();
+		if (entities == null)
+			return null;
+		
 		ArrayList<CustomEntity> returnEntities = new ArrayList<CustomEntity>();
+
 		for (Entity e : entities) {
 			CustomEntity me = new CustomEntity(e.getConfidenceScore(), e.getMatchedText());
 			me.setMatchedText(me.getMatchedText().replaceAll("((http(s?))+:\\/\\/)?[\\w|-]+(\\.([\\w|-]+))+(([|\\/|\\?|&|=|\\.|\\!|\\#|\\+]*[\\w|-]+)*(\\/|\\;)*)*", ""));
-			if (!me.getMatchedText().trim().isEmpty() && me.getConfidenceScore() > 2)
+			if (!me.getMatchedText().trim().isEmpty() && me.getConfidenceScore() > 2 && !me.getMatchedText().contains("http"))
 				returnEntities.add(me);
 		}
 		
@@ -58,6 +62,8 @@ public class TextRazorUtil {
 	
 	public List<CustomEntity> getEntities(String input, int n) {
 		ArrayList<CustomEntity> ce = this.getEntities(input);
+		if (ce == null)
+			return null;
 		List<CustomEntity> returnEntities = new ArrayList<CustomEntity>();
 		returnEntities.addAll(ce);
 		if (returnEntities.size() > n)
