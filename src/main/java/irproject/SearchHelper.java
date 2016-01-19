@@ -62,10 +62,10 @@ public class SearchHelper {
 		TopDocs topDocs = this.performSearch(tweet, gender, age, longitude, latitude, d, 100);
 		System.out.println("sto cercando");
 		ScoreDoc[] hits = topDocs.scoreDocs;
-		
+				
 		// retrieve each matching document from the ScoreDoc array
 		ArrayList<UserModel> uml = new ArrayList<UserModel>();
-		for (int i = 0; i < hits.length; i++) {
+		for (int i = 0; i < hits.length && (n != 0 ? i < n : true); i++) {
 			Document doc = searcher.doc(hits[i].doc);
 			String name = doc.get("screenName");
 			System.out.println(name + " punteggio:  " + hits[i].score + " ");
@@ -90,7 +90,6 @@ public class SearchHelper {
 				try {
 					fragments = this.tweetHighlighter.getBestTextFragments(tokenStream, field.stringValue(), false, 5);
 				} catch (InvalidTokenOffsetsException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 
@@ -111,7 +110,7 @@ public class SearchHelper {
 		BooleanQuery.Builder booleanQuery = new BooleanQuery.Builder();
 		
 		//Query sui tweet
-		if (!tweet.isEmpty()){
+		if (tweet != null && !tweet.isEmpty()){
 			QueryParser parser = new QueryParser("tweet", new TweetAnalyzer());
 			if (tweet.indexOf("\"") == 0 && tweet.lastIndexOf("\"") == tweet.length()-1){
 				parser.setDefaultOperator(Operator.AND);
@@ -128,25 +127,28 @@ public class SearchHelper {
 		}
 		
 		//Query sul genere
-		if (!gender.isEmpty()){
+		if (gender != null && !gender.isEmpty()){
 			Query queryGender = new TermQuery(new Term("gender", gender));
 			booleanQuery.add(queryGender, this.getBoolClause("gender"));
 		}
 		
 		//Query sull'età
-		String ageToSearch = "";
-		for (int i = 0; i < uClassifyRanges.length; ++i) {
-			String ageRange = uClassifyRanges[i];
-			String[] part = ageRange.split("-");
-			if (age >= Integer.valueOf(part[0]) && (age <= Integer.valueOf(part[1]))){ //TODO controlla condizioni
-				ageToSearch = uClassifyRanges[i];
-				break;
+		if (age != 0) {
+			String ageToSearch = "";
+			for (int i = 0; i < uClassifyRanges.length; ++i) {
+				String ageRange = uClassifyRanges[i];
+				String[] part = ageRange.split("-");
+				if (age >= Integer.valueOf(part[0]) && (age <= Integer.valueOf(part[1]))){ //TODO controlla condizioni
+					ageToSearch = uClassifyRanges[i];
+					break;
+				}
 			}
+			Query queryAge = new TermQuery(new Term("age", ageToSearch));
+			
+			booleanQuery.add(queryAge, this.getBoolClause("age"));
 		}
-		Query queryAge = new TermQuery(new Term("age", ageToSearch));
 		
-		booleanQuery.add(queryAge, this.getBoolClause("age"));
-		
+		//TODO gestire
 		//query sulla geolocalizzazione
 		if (radius == 0)
 			radius = 1;
