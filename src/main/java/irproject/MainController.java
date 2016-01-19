@@ -83,12 +83,11 @@ public class MainController {
 		    model.addAttribute("u", list);
 		    model.addAttribute("max_score", maxScore);
 			
-			return "user";
+			return "showresults";
 		} else {
 			return "noresults";
 		}
     }
-    
     
     @RequestMapping(value="/")
     public String index(Model model) {

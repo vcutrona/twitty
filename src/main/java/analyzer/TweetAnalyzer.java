@@ -70,7 +70,7 @@ public class TweetAnalyzer extends Analyzer {
         
         //new stopwords
         List<String> stopWords = new ArrayList <String> ();
-        stopWords.addAll(Arrays.asList(this.ENGLISH.split(" ")));
+        stopWords.addAll(Arrays.asList(ENGLISH.split(" ")));
         tokenFilter = new StopFilter(tokenFilter, StopFilter.makeStopSet(stopWords));
         
         // Stemming english words

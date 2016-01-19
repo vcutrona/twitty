@@ -20,130 +20,130 @@
 <!-- use "theme-invert" class on bright backgrounds, also try "text-shadows" class -->
 <body class="theme-invert">
 
-<nav class="mainmenu">
-	<div class="container">
-		<div class="dropdown">
-			<button type="button" class="navbar-toggle" data-toggle="dropdown"><span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
-			<!-- <a data-toggle="dropdown" href="#">Dropdown trigger</a> -->
-			<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-				<li><a href="#head" class="active">Home</a></li>
-				<li><a href="#contact">Get in touch</a></li>
-			</ul>
-		</div>
-	</div>
-</nav>
-
-
-<!-- Main (Home) section -->
-<section class="section" id="head">
-	<div class="container">
-
-		<div class="row">
-			<div class="col-md-6">
-
-				<!-- Site Title, your name, HELLO msg, etc. -->
-				<h1 class="title">Twitter friends</h1>
-				<h2 class="subtitle">Find information about users</h2>
-                
-                <form action="#" th:action="@{/search}" th:object="${search}" method="post">
-                	<div class="form-group">
-                        <label>Interest: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{interest}" />
-                        <label>Age: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{age}" />
-                        <label>Gender: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{gender}" />
-                        <label>Latitude: </label>
-                        <input type="text" id="latitude" class="form-control" name="myquery" th:field="*{latitude}" />
-                        <label>Longitude: </label>
-                        <input type="text" id="longitude" class="form-control" name="myquery" th:field="*{longitude}" />
-                        <label>Radius: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{radius}" />
-                        <label>Number: </label>
-                        <input type="text" class="form-control" name="myquery" th:field="*{number}" />
-                        <label>City: </label>
-				        <input id="city" class="form-control tip" type="text" 
-				         value=""  />
-				        <label>Country: </label>
-				        <input id="country" class="form-control tip" type="text" 
-				        value=""  />
-                    </div>
-                    
-                    <button type="submit" class="btn btn-default">Submit</button> <button type="reset" class="btn btn-default">Reset</button>
-			    </form>
-			</div> <!-- /col -->
-			<div class="col-md-6">
-				<h3> Geo coordinates are too difficult? Use our search tool to find them! Just write the address and define a radius</h3>
-					   <label>Address to search: </label>
-				       <input id="rawAddress" class="form-control tip" type="text" placeholder="Type the address"
-				       title="Enter the address or move the marker" value=""/>
-				       <label>Address found: </label>
-				       <input id="addressClean" class="form-control tip" type="text" 
-				       title="Enter the address or move the marker" value="" readonly="readonly" />
-				       <hr/>
-				<div id="map-canvas" style="height:287px"></div>
-			</div> <!-- second /col -->
-		</div> <!-- /row -->
-
-	</div>
-</section>
-
-<!-- Fourth (Contact) section -->
-<section class="section" id="contact">
-	<div class="container">
-
-		<h2 class="text-center title">Get in touch</h2>
-
-		<div class="row">
-			<div class="col-sm-8 col-sm-offset-2 text-center">
-				<p class="lead">Have a question about this template, or want to suggest a new feature?</p>
-				<p>Feel free to email me, or drop me a line in Twitter!</p>
-				<p><b>gt@gettemplate.com</b><br/><br/></p>
-				<ul class="list-inline list-social">
-					<li><a href="https://twitter.com/serggg" class="btn btn-link"><i class="fa fa-twitter fa-fw"></i> Twitter</a></li>
-					<li><a href="https://github.com/pozhilov" class="btn btn-link"><i class="fa fa-github fa-fw"></i> Github</a></li>
-					<li><a href="http://linkedin/in/pozhilov" class="btn btn-link"><i class="fa fa-linkedin fa-fw"></i> LinkedIn</a></li>
+	<nav class="mainmenu">
+		<div class="container">
+			<div class="dropdown">
+				<button type="button" class="navbar-toggle" data-toggle="dropdown"><span class="icon-bar"></span> <span class="icon-bar"></span> <span class="icon-bar"></span> </button>
+				<!-- <a data-toggle="dropdown" href="#">Dropdown trigger</a> -->
+				<ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+					<li><a href="#head" class="active">Home</a></li>
+					<li><a href="#contact">Get in touch</a></li>
 				</ul>
 			</div>
 		</div>
-
-	</div>
-</section>
-
-<!-- Load js libs only when the page is loaded. -->
-<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
-<script src="js/modernizr.custom.72241.js"></script>
-<!-- Custom template scripts -->
+	</nav>
 
 
-<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+	<!-- Main (Home) section -->
+	<section class="section" id="head">
+		<div class="container">
+	
+			<div class="row">
+				<div class="col-md-6">
+	
+					<!-- Site Title, your name, HELLO msg, etc. -->
+					<h1 class="title">Twitter friends</h1>
+					<h2 class="subtitle">Find information about users</h2>
+	                
+	                <form action="#" th:action="@{/search}" th:object="${search}" method="post">
+	                	<div class="form-group">
+	                        <label>Interest: </label>
+	                        <input type="text" class="form-control" name="myquery" th:field="*{interest}" />
+	                        <label>Age: </label>
+	                        <input type="text" class="form-control" name="myquery" th:field="*{age}" />
+	                        <label>Gender: </label>
+	                        <input type="text" class="form-control" name="myquery" th:field="*{gender}" />
+	                        <label>Latitude: </label>
+	                        <input type="text" id="latitude" class="form-control" name="myquery" th:field="*{latitude}" />
+	                        <label>Longitude: </label>
+	                        <input type="text" id="longitude" class="form-control" name="myquery" th:field="*{longitude}" />
+	                        <label>Radius: </label>
+	                        <input type="text" class="form-control" name="myquery" th:field="*{radius}" />
+	                        <label>Number: </label>
+	                        <input type="text" class="form-control" name="myquery" th:field="*{number}" />
+	                        <label>City: </label>
+					        <input id="city" class="form-control tip" type="text" 
+					         value=""  />
+					        <label>Country: </label>
+					        <input id="country" class="form-control tip" type="text" 
+					        value=""  />
+	                    </div>
+	                    
+	                    <button type="submit" class="btn btn-default">Submit</button> <button type="reset" class="btn btn-default">Reset</button>
+				    </form>
+				</div> <!-- /col -->
+				<div class="col-md-6">
+					<h3> Geo coordinates are too difficult? Use our search tool to find them! Just write the address and define a radius</h3>
+						   <label>Address to search: </label>
+					       <input id="rawAddress" class="form-control tip" type="text" placeholder="Type the address"
+					       title="Enter the address or move the marker" value=""/>
+					       <label>Address found: </label>
+					       <input id="addressClean" class="form-control tip" type="text" 
+					       title="Enter the address or move the marker" value="" readonly="readonly" />
+					       <hr/>
+					<div id="map-canvas" style="height:287px"></div>
+				</div> <!-- second /col -->
+			</div> <!-- /row -->
+	
+		</div>
+	</section>
 
-    <script type="text/javascript">
-      // vars
-      var iconMarker = 'img/social-balloon-twitter-icon.png';
-      var mapCenter = new google.maps.LatLng(42.9508683, 12.701474899999994);
+	<!-- Fourth (Contact) section -->
+	<section class="section" id="contact">
+		<div class="container">
+	
+			<h2 class="text-center title">Get in touch</h2>
+	
+			<div class="row">
+				<div class="col-sm-8 col-sm-offset-2 text-center">
+					<p class="lead">Have a question about this template, or want to suggest a new feature?</p>
+					<p>Feel free to email me, or drop me a line in Twitter!</p>
+					<p><b>gt@gettemplate.com</b><br/><br/></p>
+					<ul class="list-inline list-social">
+						<li><a href="https://twitter.com/serggg" class="btn btn-link"><i class="fa fa-twitter fa-fw"></i> Twitter</a></li>
+						<li><a href="https://github.com/pozhilov" class="btn btn-link"><i class="fa fa-github fa-fw"></i> Github</a></li>
+						<li><a href="http://linkedin/in/pozhilov" class="btn btn-link"><i class="fa fa-linkedin fa-fw"></i> LinkedIn</a></li>
+					</ul>
+				</div>
+			</div>
+	
+		</div>
+	</section>
 
-      // fields
-      var rawAddressField = $('#rawAddress');
-      var nameField = $('#name');
-      var latField = $('#latitude');
-      var lngField = $('#longitude');
-      var addressField = $('#addressClean');
-      var cityField = $('#city');
-      var countryField = $('#country');
-
-      $(function () {
-        initialize();
-
-            var center = map.getCenter();
-            google.maps.event.trigger(map, "resize");
-            map.setCenter(center);
-
-      });
-
-    </script>
-<script type="text/javascript" src="js/map.js"></script>
+	<!-- Load js libs only when the page is loaded. -->
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+	<script src="http://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script>
+	<script src="js/modernizr.custom.72241.js"></script>
+	
+	<!-- Custom template scripts -->
+	
+	<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js"></script>
+	
+	    <script type="text/javascript">
+	      // vars
+	      var iconMarker = 'img/social-balloon-twitter-icon.png';
+	      var mapCenter = new google.maps.LatLng(42.9508683, 12.701474899999994);
+	
+	      // fields
+	      var rawAddressField = $('#rawAddress');
+	      var nameField = $('#name');
+	      var latField = $('#latitude');
+	      var lngField = $('#longitude');
+	      var addressField = $('#addressClean');
+	      var cityField = $('#city');
+	      var countryField = $('#country');
+	
+	      $(function () {
+	        initialize();
+	
+	            var center = map.getCenter();
+	            google.maps.event.trigger(map, "resize");
+	            map.setCenter(center);
+	
+	      });
+	
+	    </script>
+	<script type="text/javascript" src="js/map.js"></script>
     
 </body>
 </html>

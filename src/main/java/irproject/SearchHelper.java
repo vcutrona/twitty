@@ -18,9 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.lucene.analysis.TokenStream;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.FieldType.NumericType;
 import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.queryparser.classic.QueryParser.Operator;
 import org.apache.lucene.queryparser.classic.ParseException;
@@ -32,20 +30,12 @@ import org.apache.lucene.search.highlight.InvalidTokenOffsetsException;
 import org.apache.lucene.search.highlight.QueryScorer;
 import org.apache.lucene.search.highlight.SimpleSpanFragmenter;
 import org.apache.lucene.search.highlight.TextFragment;
-import org.apache.lucene.search.highlight.TokenSources;
-import org.apache.lucene.search.similarities.BM25Similarity;
-import org.apache.lucene.search.similarities.LMDirichletSimilarity;
-import org.apache.lucene.search.similarities.LMSimilarity;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 
 import analyzer.TweetAnalyzer;
 import entity.UserModel;
-import twitter4j.Twitter;
 import twitter4j.TwitterException;
-import twitter4j.TwitterFactory;
-import twitter4j.User;
-import twitter4j.conf.ConfigurationBuilder;
 
 public class SearchHelper {
 
@@ -94,7 +84,8 @@ public class SearchHelper {
 			
 			IndexableField[] tweets = doc.getFields("tweet");
 			for (IndexableField field : tweets) {
-                TokenStream tokenStream = new TweetAnalyzer().tokenStream("", field.stringValue());
+                @SuppressWarnings("resource")
+				TokenStream tokenStream = new TweetAnalyzer().tokenStream("", field.stringValue());
                 TextFragment[] fragments = null;
 				try {
 					fragments = this.tweetHighlighter.getBestTextFragments(tokenStream, field.stringValue(), false, 5);

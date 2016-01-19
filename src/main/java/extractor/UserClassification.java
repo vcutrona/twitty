@@ -2,7 +2,6 @@ package extractor;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.Map;
 
 import com.google.code.uclassify.client.UClassifyClient;

@@ -1,6 +1,5 @@
 package twitter;
 
-import twitter4j.HashtagEntity;
 import twitter4j.Paging;
 import twitter4j.StallWarning;
 import twitter4j.Status;
@@ -17,7 +16,6 @@ import twitter4j.conf.ConfigurationBuilder;
 import util.GoogleMapsLocator;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -55,21 +53,7 @@ public class TweetExtractor {
 		}
 		return statuses;
 	}
-	
-	private String getUserHashtag(List<Status> statuses) throws TwitterException {
-
-		HashSet <HashtagEntity> hashtags = new HashSet<HashtagEntity>();
-		for (Status status : statuses) {
-			
-			hashtags.addAll(Arrays.asList(status.getHashtagEntities()));
-		}
-		String hashy = "";
-        for (HashtagEntity hashtagEntity : hashtags) {
-        	hashy += hashtagEntity.getText() + " ";
-		}
-		return hashy;
-	}
-	
+		
 	public ArrayList<UserFields> execute() throws TwitterException {
 
 		final HashSet<UserFields> users = new HashSet<UserFields>();

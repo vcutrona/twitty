@@ -7,24 +7,18 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
 
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.analysis.core.KeywordAnalyzer;
-import org.apache.lucene.analysis.en.EnglishAnalyzer;
 import org.apache.lucene.analysis.miscellaneous.PerFieldAnalyzerWrapper;
-import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.document.Document;
-import org.apache.lucene.document.DoubleField;
 import org.apache.lucene.document.Field;
-import org.apache.lucene.document.FieldType;
 import org.apache.lucene.document.GeoPointField;
 import org.apache.lucene.document.IntField;
 import org.apache.lucene.document.NumericDocValuesField;
 import org.apache.lucene.document.StoredField;
 import org.apache.lucene.document.TextField;
-import org.apache.lucene.index.IndexOptions;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
@@ -130,9 +124,10 @@ public class IndexCreator {
 							break;
 						case "java.util.ArrayList<java.lang.String>":
 							try {
+								@SuppressWarnings("unchecked")
 								ArrayList<String> strings = (ArrayList<String>) field.get(user);
 								if (strings != null) {
-									System.out.println("List attribute: " + field.getName() + " Value: " + (ArrayList<String>)field.get(user) );
+									System.out.println("List attribute: " + field.getName() + " Value: " + strings );
 									for (String string: strings){
 										doc.add(new TextField(field.getName(), string, Field.Store.YES));
 									}
