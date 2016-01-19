@@ -116,7 +116,7 @@ public class SearchHelper {
 			if (tweet.indexOf("\"") == 0 && tweet.lastIndexOf("\"") == tweet.length()-1){
 				parser.setDefaultOperator(Operator.AND);
 			}
-			Query queryTweet = parser.parse(tweet);
+			Query queryTweet = parser.parse(QueryParser.escape(tweet));
 			
 			QueryScorer queryScorerTweet = new QueryScorer(queryTweet, "tweet");
 	        Fragmenter fragment = new SimpleSpanFragmenter(queryScorerTweet, 200);

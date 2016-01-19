@@ -22,4 +22,14 @@ public class UserFields {
 	public String name;
 	public String description;
 	
+	
+	public String getScreenName() {
+		return screenName;
+	}
+	public void setScreenName(String screenName) {
+		this.screenName = screenName;
+	}
+	
+	
+	
 }

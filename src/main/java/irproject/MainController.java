@@ -3,6 +3,7 @@ package irproject;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.springframework.stereotype.Controller;
@@ -17,7 +18,9 @@ import entity.UserFields;
 import entity.UserModel;
 import extractor.UserClassification;
 import twitter.TweetExtractor;
+import twitter4j.Status;
 import twitter4j.TwitterException;
+import org.apache.commons.lang.StringEscapeUtils;
 
 @Controller//@RestController
 public class MainController {
@@ -54,12 +57,56 @@ public class MainController {
 	    	return "error";
 	    }
     }
-        
+    
+    @RequestMapping(value="/best-friend", method=RequestMethod.GET)
+    public String bestFriendForm(Model model) {
+        model.addAttribute("search", new UserFields());
+        return "best_friend";
+    }
+    
+
+    
+    @RequestMapping(value="/best-friend", method=RequestMethod.POST)
+    public String bestFriendsearch(@ModelAttribute UserFields search,
+    		Model model) throws TwitterException {
+    	TweetExtractor twe = new TweetExtractor();
+    	String description = twe.getDescription(search.getScreenName());
+
+    	
+    	HashMap<String, String> ht = new HashMap<String, String>();
+		ht.put("tweet", "OR");
+		ht.put("gender", "OR");
+		ht.put("age", "OR");
+		ht.put("geolocation", "OR");
+				
+		SearchHelper se;
+		try {
+			se = new SearchHelper(ht);
+			ArrayList<UserModel> list = se.search(
+					StringEscapeUtils.escapeJava(description.toLowerCase().trim()), 
+	    			"", 0,0,0,0,5,(false));
+	    	
+			if (list.size() > 0) {
+				double maxScore = list.get(0).getScore();
+
+			    model.addAttribute("u", list);
+			    model.addAttribute("max_score", maxScore);
+				return "showresults";
+			} else {
+				return "noresults";
+			}
+		} catch (IOException | NumberFormatException | ParseException | TwitterException e) {
+			e.printStackTrace();
+			return "error";
+		}
+    }
+    
     @RequestMapping(value="/search", method=RequestMethod.GET)
     public String searchForm(Model model) {
         model.addAttribute("search", new Search());
         return "search";
     }
+    
     @RequestMapping(value="/search", method=RequestMethod.POST)
     public String search(@ModelAttribute Search search,
     		Model model) {

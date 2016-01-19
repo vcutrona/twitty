@@ -43,7 +43,7 @@ public class TweetExtractor {
 		twitter = new TwitterFactory(c).getInstance();
 	}
 	
-	private static List<Status>  getStatuses(String screenName){
+	public  List<Status>  getStatuses(String screenName){
 		Paging paging = new Paging(1, 200);
 		List<Status> statuses = null;
 		try {
@@ -52,6 +52,11 @@ public class TweetExtractor {
 			e.printStackTrace();
 		}
 		return statuses;
+	}
+	
+	public String getDescription(String screenName) throws TwitterException {
+		User user = twitter.showUser(screenName);
+		return user.getDescription();
 	}
 		
 	public ArrayList<UserFields> execute() throws TwitterException {
