@@ -22,6 +22,10 @@ import twitter4j.TwitterException;
 @Controller//@RestController
 public class MainController {
 	
+	@RequestMapping(value="/")
+    public String index(Model model) {
+        return "index";
+    }
 
     @RequestMapping("/build")
     public String build(Model model) {
@@ -37,14 +41,13 @@ public class MainController {
 			System.out.println("index created");
 
 			ArrayList<UserFields> u = new ArrayList<UserFields>();
-			
 			u.addAll(uf);
 			
 			if (u.size() > 5)
 				model.addAttribute("u", u.subList(0, 5));
 			else
 				model.addAttribute("u", u);
-			return "index"; //TODO
+			return "index";
     	} catch(Exception e) {
     		System.out.println(e.getMessage());
     		System.out.println(e.getStackTrace());
@@ -59,7 +62,7 @@ public class MainController {
     }
     @RequestMapping(value="/search", method=RequestMethod.POST)
     public String search(@ModelAttribute Search search,
-    		Model model) throws IOException, ParseException, TwitterException {
+    		Model model) {
     	
 		HashMap<String, String> ht = new HashMap<String, String>();
 		ht.put("tweet", (search.isInterestDic() ? "AND" : "OR"));
@@ -67,38 +70,31 @@ public class MainController {
 		ht.put("age", (search.isAgeDic() ? "AND" : "OR"));
 		ht.put("geolocation", (search.isGeoDic() ? "AND" : "OR"));
 				
-		SearchHelper se = new SearchHelper(ht); 
-    	ArrayList<UserModel> list = se.search(
-    			search.getInterest().toLowerCase().trim(), 
-    			search.getGender().toLowerCase().trim(), 
-    			(search.getAge() != null && !search.getAge().isEmpty() ? Integer.parseInt(search.getAge()) : 0),
-    			(search.getLongitude() != null && !search.getLongitude().isEmpty() ? Double.parseDouble(search.getLongitude()) : 0),
-    			(search.getLatitude() != null && !search.getLatitude().isEmpty() ? Double.parseDouble(search.getLatitude()) : 0),
-    			(search.getRadius() != null && !search.getRadius().isEmpty() ? Integer.parseInt(search.getRadius()) : 0),
-    			(search.getNumber() != null && !search.getNumber().isEmpty() ? Integer.parseInt(search.getNumber()) : 0),
-    			(search.isBoost()));
-    	
-		if (list.size() > 0) {
-			double maxScore = list.get(0).getScore();
+		SearchHelper se;
+		try {
+			se = new SearchHelper(ht);
+			ArrayList<UserModel> list = se.search(
+	    			search.getInterest().toLowerCase().trim(), 
+	    			search.getGender().toLowerCase().trim(), 
+	    			(search.getAge() != null && !search.getAge().isEmpty() ? Integer.parseInt(search.getAge()) : 0),
+	    			(search.getLongitude() != null && !search.getLongitude().isEmpty() ? Double.parseDouble(search.getLongitude()) : 0),
+	    			(search.getLatitude() != null && !search.getLatitude().isEmpty() ? Double.parseDouble(search.getLatitude()) : 0),
+	    			(search.getRadius() != null && !search.getRadius().isEmpty() ? Integer.parseInt(search.getRadius()) : 0),
+	    			(search.getNumber() != null && !search.getNumber().isEmpty() ? Integer.parseInt(search.getNumber()) : 0),
+	    			(search.isBoost()));
+	    	
+			if (list.size() > 0) {
+				double maxScore = list.get(0).getScore();
 
-		    model.addAttribute("u", list);
-		    model.addAttribute("max_score", maxScore);
-			
-			return "showresults";
-		} else {
-			return "noresults";
+			    model.addAttribute("u", list);
+			    model.addAttribute("max_score", maxScore);
+				return "showresults";
+			} else {
+				return "noresults";
+			}
+		} catch (IOException | NumberFormatException | ParseException | TwitterException e) {
+			e.printStackTrace();
+			return "error";
 		}
-    }
-    
-    @RequestMapping(value="/")
-    public String index(Model model) {
-        return "index";
-    }
-        
-    @RequestMapping(value = "/user", method=RequestMethod.POST)
-    public String getdata(@ModelAttribute UserModel user, Model model) {
-    	System.out.println(user.screenName);
-    	
-		return "user";
     }
 }
