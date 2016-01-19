@@ -14,6 +14,7 @@
     </parent>
 
     <dependencies>
+    	<!--  Spring -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-thymeleaf</artifactId>
@@ -51,6 +52,7 @@
 			<artifactId>lucene-highlighter</artifactId>
 			<version>5.4.0</version>
 		</dependency>
+		
 		<!-- uClassify -->
 		<dependency>
 		    <groupId>uclassify-java-sdk</groupId>
@@ -122,6 +124,13 @@
 			<groupId>org.twitter4j</groupId>
 			<artifactId>twitter4j-media-support</artifactId>
 			<version>4.0.4</version>
+		</dependency>
+		
+		<!-- TextRazor -->
+		<dependency>
+		  <groupId>com.textrazor</groupId>
+		  <artifactId>textrazor</artifactId>
+		  <version>1.0.6</version>
 		</dependency>		
     </dependencies>
 
