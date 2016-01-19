@@ -53,8 +53,6 @@ public class TextRazorUtil {
 		returnEntities.clear();
 		returnEntities.addAll(noDup);
 		Collections.sort(returnEntities);
-		System.out.println(returnEntities.size());
-		System.out.println(noDup.size());
 		return returnEntities;
 	}
 	
@@ -65,12 +63,5 @@ public class TextRazorUtil {
 		if (returnEntities.size() > n)
 			return returnEntities.subList(0, n);
 		return returnEntities;
-	}
-	
-	public static void xmain(String[] args) {
-		TextRazorUtil tru = new TextRazorUtil();
-		for(CustomEntity ce : tru.getEntities("I use @Trello for [planning spelunking trips] http://bit.ly/1NF1j2l  #Trello10m", 5)){
-			System.out.println(ce);
-		}
 	}
 }

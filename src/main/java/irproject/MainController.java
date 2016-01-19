@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-
+import entity.CustomEntity;
 import entity.Search;
 import entity.UserFields;
 import entity.UserModel;
@@ -20,7 +20,7 @@ import extractor.UserClassification;
 import twitter.TweetExtractor;
 import twitter4j.Status;
 import twitter4j.TwitterException;
-import org.apache.commons.lang.StringEscapeUtils;
+import util.TextRazorUtil;
 
 @Controller//@RestController
 public class MainController {
@@ -64,14 +64,22 @@ public class MainController {
         return "best_friend";
     }
     
-
-    
     @RequestMapping(value="/best-friend", method=RequestMethod.POST)
     public String bestFriendsearch(@ModelAttribute UserFields search,
     		Model model) throws TwitterException {
     	TweetExtractor twe = new TweetExtractor();
-    	String description = twe.getDescription(search.getScreenName());
-
+    	TextRazorUtil tru = new TextRazorUtil();
+    	List<Status> statuses = twe.getStatuses(search.getScreenName());
+    	String concatStatuses = "";
+    	for (Status s : statuses) {
+    		concatStatuses += " " + s;
+    	}
+    	ArrayList<CustomEntity> ces = tru.getEntities(concatStatuses);
+    	
+    	String concatEntities = "";
+    	for (CustomEntity ce : ces) {
+    		concatEntities += " " + ce.getMatchedText();
+    	}
     	
     	HashMap<String, String> ht = new HashMap<String, String>();
 		ht.put("tweet", "OR");
@@ -82,9 +90,7 @@ public class MainController {
 		SearchHelper se;
 		try {
 			se = new SearchHelper(ht);
-			ArrayList<UserModel> list = se.search(
-					StringEscapeUtils.escapeJava(description.toLowerCase().trim()), 
-	    			"", 0,0,0,0,5,(false));
+			ArrayList<UserModel> list = se.search(concatEntities, "", 0,0,0,0,5,(false));
 	    	
 			if (list.size() > 0) {
 				double maxScore = list.get(0).getScore();
