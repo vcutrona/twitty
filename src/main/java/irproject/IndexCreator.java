@@ -24,7 +24,7 @@ import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.store.Directory;
 import org.apache.lucene.store.SimpleFSDirectory;
 
-import analyzer.TweetAnalyzer;
+import analyzer.CustomAnalyzer;
 import entity.Locator;
 import entity.UserFields;
 
@@ -51,7 +51,7 @@ public class IndexCreator {
 	        
 		// map field-name to analyzer
 		Map<String, Analyzer> analyzerPerField = new HashMap<String, Analyzer>();
-		analyzerPerField.put("tweet", new TweetAnalyzer());
+		analyzerPerField.put("tweet", new CustomAnalyzer());
 		 
 		// create a per-field analyzer wrapper using the StandardAnalyzer as .. standard analyzer ;)
 		PerFieldAnalyzerWrapper analyzer = new PerFieldAnalyzerWrapper(new KeywordAnalyzer(), analyzerPerField);

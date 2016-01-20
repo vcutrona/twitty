@@ -33,7 +33,7 @@ import org.apache.lucene.search.highlight.TextFragment;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.store.FSDirectory;
 
-import analyzer.TweetAnalyzer;
+import analyzer.CustomAnalyzer;
 import entity.UserModel;
 import twitter4j.TwitterException;
 
@@ -86,7 +86,7 @@ public class SearchHelper {
 				IndexableField[] tweets = doc.getFields("tweet");
 				for (IndexableField field : tweets) {
 	                @SuppressWarnings("resource")
-					TokenStream tokenStream = new TweetAnalyzer().tokenStream("", field.stringValue());
+					TokenStream tokenStream = new CustomAnalyzer().tokenStream("", field.stringValue());
 	                TextFragment[] fragments = null;
 					try {
 						fragments = this.tweetHighlighter.getBestTextFragments(tokenStream, field.stringValue(), false, 5);
@@ -112,7 +112,7 @@ public class SearchHelper {
 		
 		//Query sui tweet
 		if (tweet != null && !tweet.isEmpty()){
-			QueryParser parser = new QueryParser("tweet", new TweetAnalyzer());
+			QueryParser parser = new QueryParser("tweet", new CustomAnalyzer());
 			if (tweet.indexOf("\"") == 0 && tweet.lastIndexOf("\"") == tweet.length()-1){
 				parser.setDefaultOperator(Operator.AND);
 			}
