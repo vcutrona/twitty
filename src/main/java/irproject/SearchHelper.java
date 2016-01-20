@@ -139,7 +139,7 @@ public class SearchHelper {
 			for (int i = 0; i < uClassifyRanges.length; ++i) {
 				String ageRange = uClassifyRanges[i];
 				String[] part = ageRange.split("-");
-				if (age >= Integer.valueOf(part[0]) && (age <= Integer.valueOf(part[1]))){ //TODO controlla condizioni
+				if (age >= Integer.valueOf(part[0]) && (age <= Integer.valueOf(part[1]))){
 					ageToSearch = uClassifyRanges[i];
 					break;
 				}
@@ -159,7 +159,7 @@ public class SearchHelper {
 		
 		//Controllo numero risultati
 		if (n <= 0)
-			n = Integer.MAX_VALUE; //TODO ok?
+			n = Integer.MAX_VALUE;
 
 		//Query sui follower (boost)
 		if (boost) {
@@ -168,7 +168,6 @@ public class SearchHelper {
 		} else {
 			return searcher.search(booleanQuery.build(), n);
 		}
-		//searcher.setSimilarity(new LMDirichletSimilarity()); 
 		
 	}
 

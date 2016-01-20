@@ -26,13 +26,11 @@ public class UserClassification {
 
 		Map<String, Classification> classifications = this.client.classify("uClassify", "GenderAnalyzer_v5",
 				Arrays.asList(tweetData));
-		System.out.println("================ Classifications ==================");
 		String returnClass = "None";	
 		
 		for (String text : classifications.keySet()) {
 
 			Classification classification = classifications.get(text);
-			System.out.println("====================");
 			double pointClass = -1;
 			for (Class clazz : classification.getClazz()) {
 				String currentClass = clazz.getClassName();
@@ -50,13 +48,11 @@ public class UserClassification {
 
 		Map<String, Classification> classifications = this.client.classify("uClassify", "Ageanalyzer",
 				Arrays.asList(tweetData));
-		System.out.println("================ Classifications ==================");
 		String returnClass = "None";
 
 		for (String text : classifications.keySet()) {
 
 			Classification classification = classifications.get(text);
-			System.out.println("====================");
 			double pointClass = -1;
 			for (Class clazz : classification.getClazz()) {
 				String currentClass = clazz.getClassName();
@@ -76,7 +72,6 @@ public class UserClassification {
 			for (String tweet : user.tweet) {
 				tweetData +=  " " + tweet;
 			}
-			System.out.println("collegati tweet");
 			user.gender = this.getGender(user.screenName, tweetData);
 			System.out.println("gender");
 			user.age = this.getAge(user.screenName, tweetData);
