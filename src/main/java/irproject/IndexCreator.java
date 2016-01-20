@@ -36,12 +36,13 @@ public class IndexCreator {
 		
 		Path path = FileSystems.getDefault().getPath("logs", "index");
 
+		/*
 		//delete old index
 		if (path.toFile().isDirectory())
 			for (File file: Arrays.asList(path.toFile().listFiles())) {
 				file.delete();
 			}
-		
+		*/
 		Directory index = null;
 		try {
 			index = new SimpleFSDirectory(path);
@@ -165,34 +166,4 @@ public class IndexCreator {
 		populateIndex(w, users);
 	}
 	
-
-	public static void xmain(String[] args) throws IllegalArgumentException, IllegalAccessException {
-				
-		UserFields user = new UserFields();
-		user.gender = "male";
-		user.age = "13-17";
-		//user.follower = 15;
-		user.screenName = "Angelino";
-		String[] asd = {"beautiful", "interested"};
-		ArrayList<String> tweet = new ArrayList<String>();
-		tweet.addAll(Arrays.asList(asd));
-		user.tweet = tweet;
-		
-		UserFields user2 = new UserFields();
-		user2.screenName = "Paolina";
-		user2.gender = "male";
-		user2.age = "18-25";
-		//user2.follower = 15;
-		String[] asd2 = {"mind", "interesting hashtag #gay"};
-		tweet = new ArrayList<String>();
-		tweet.addAll(Arrays.asList(asd2));
-		user2.tweet = tweet;
-		
-		ArrayList<UserFields> uf = new ArrayList<UserFields>();
-		uf.add(user);
-		uf.add(user2);
-		create(uf);
-		
-	}
-
 }

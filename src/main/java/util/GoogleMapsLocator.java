@@ -70,13 +70,4 @@ public class GoogleMapsLocator {
 		}
 		
 	}
-	/**
-	 * Test method
-	 * @param args
-	 * @throws Exception
-	 */
-	public static void test(String args[]) throws Exception {
-		GoogleMapsLocator gp = new GoogleMapsLocator();
-		gp.getLocationData("bergamo");
-	}
 }

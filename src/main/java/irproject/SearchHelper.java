@@ -179,19 +179,5 @@ public class SearchHelper {
 	private Occur getBoolClause(String field) {
 		return (this.dictionary.get(field).equals("AND") ? BooleanClause.Occur.MUST : BooleanClause.Occur.SHOULD);
 	}
-	
-	public static void xmain(String[] args) throws IOException, ParseException, TwitterException {
-		HashMap<String, String> ht = new HashMap<String, String>();
-		ht.put("tweet", "OR");
-		ht.put("gender", "OR");
-		ht.put("age", "OR");
-		ht.put("geolocation", "OR");
 
-		SearchHelper se = new SearchHelper(ht); 
-    	ArrayList<UserModel> list = se.search("", "male", 0, 0, 0, 1, 0, true);
-		
-    	for (UserModel u : list) {
-    		System.out.println(u.screenName);
-    	}		
-	}
 }
